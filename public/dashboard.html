@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Purchasing System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#6A7B31" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1 id="welcome-message"></h1>
+        <button id="logout-btn" class="btn btn-secondary">Logout</button>
+      </div>
+      <h2>Menu Utama</h2>
+      <div class="menu-grid">
+        <a href="pr.html" class="menu-item" id="menu-pr">
+          <div class="menu-icon"><i class="fa-solid fa-file-pen"></i></div>
+          <div class="menu-title">Buat PR Baru</div>
+          <div class="menu-desc">Mengisi form permintaan.</div>
+        </a>
+        <a href="daftarpr.html" class="menu-item" id="menu-pr-list">
+          <div class="menu-icon"><i class="fa-solid fa-list-check"></i></div>
+          <div class="menu-title">Daftar PR</div>
+          <div class="menu-desc">Lihat semua permintaan Anda.</div>
+        </a>
+        <a href="admin.html" class="menu-item" id="menu-approval">
+          <div class="menu-icon"><i class="fa-solid fa-user-shield"></i></div>
+          <div class="menu-title">Panel Admin</div>
+          <div class="menu-desc">Persetujuan & Manajemen.</div>
+        </a>
+      </div>
+    </div>
+    <script src="dashboard.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("Service Worker registered:", registration);
+            })
+            .catch((error) => {
+              console.log("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

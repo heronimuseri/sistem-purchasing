@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Purchase Request - Purchasing System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="daftarpr.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#6A7B31" />
+  </head>
+  <body>
+    <div class="print-only">
+      <div class="card-print">
+        <div class="card-header-print">
+          <div class="header-brand-print">
+            <img src="logo.png" alt="Logo Perusahaan" />
+            <div>
+              <h3 class="company-title">SINAR PERMATA AGRO</h3>
+              <h1 class="title">PERMINTAAN BARANG</h1>
+              <p class="subtitle">(PURCHASE REQUESTION)</p>
+            </div>
+          </div>
+          <div class="header-meta-print">
+            <div><strong>PR. No:</strong> <span id="print-pr-no"></span></div>
+            <div>
+              <strong>Tanggal:</strong> <span id="print-tanggal"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card-content-print">
+          <p>
+            <strong>Untuk Kebutuhan / Uraian:</strong>
+            <span id="print-keperluan"></span>
+          </p>
+          <div class="table-wrap-print">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Stock Code</th>
+                  <th>Jenis Material</th>
+                  <th>Qty</th>
+                  <th>Satuan</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="print-items-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <table class="signatures-print-table">
+          <thead>
+            <tr>
+              <th>Diminta Oleh</th>
+              <th>Diperiksa Oleh</th>
+              <th>Disetujui Oleh</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="signature-space-row">
+              <td></td>
+              <td><div class="stamp-container" id="stamp-ktu"></div></td>
+              <td><div class="stamp-container" id="stamp-manager"></div></td>
+            </tr>
+            <tr class="signature-name-row">
+              <td id="print-name-1"></td>
+              <td id="print-name-2"></td>
+              <td id="print-name-3"></td>
+            </tr>
+            <tr class="signature-role-row">
+              <td><strong>Kerani</strong></td>
+              <td><strong>KTU</strong></td>
+              <td><strong>Estate Manager</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="container screen-only">
+      <div class="header">
+        <h1><i class="fa-solid fa-list-check"></i> Daftar Purchase Request</h1>
+        <div class="header-actions">
+          <a href="dashboard.html" class="btn btn-secondary"
+            >Kembali ke Dashboard</a
+          >
+          <button id="logout-btn" class="btn btn-secondary">Logout</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Cari berdasarkan uraian atau PR No..."
+        />
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>PR NO.</th>
+              <th>URAIAN</th>
+              <th>JUMLAH ITEM</th>
+              <th>STATUS</th>
+              <th>AKSI</th>
+            </tr>
+          </thead>
+          <tbody id="requests-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="daftarpr.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("Service Worker registered:", registration);
+            })
+            .catch((error) => {
+              console.log("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

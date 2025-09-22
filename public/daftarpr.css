@@ -1,0 +1,467 @@
+/* public/daftarpr.css (Final Lengkap) */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg-color: #f7f8fc;
+  --panel-color: #ffffff;
+  --text-color: #343a40;
+  --muted-color: #6c757d;
+  --primary-color: #0ea5e9;
+  --success-color: #22c55e;
+  --success-dark: #16a34a;
+  --danger-color: #ef4444;
+  --danger-dark: #dc2626;
+  --pending-bg: #fffbeb;
+  --pending-text: #f59e0b;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --border-radius: 12px;
+  --border-color: #e9ecef;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: var(--text-color);
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+.toolbar {
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+}
+
+#searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+.table-wrapper {
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--panel-color);
+}
+
+th,
+td {
+  padding: 14px 18px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted-color);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status.fully-approved {
+  background-color: #dcfce7;
+  color: var(--success-dark);
+}
+.status.pending-ktu-approval,
+.status.pending-manager-approval {
+  background-color: var(--pending-bg);
+  color: var(--pending-text);
+}
+.status.rejected {
+  background-color: #fee2e2;
+  color: var(--danger-dark);
+}
+.loading-text {
+  text-align: center;
+  color: var(--muted-color);
+  padding: 40px;
+}
+button:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.action-cell {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  min-width: 210px;
+}
+
+.action-cell .btn-sm {
+  flex-grow: 1;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-approve {
+  background-color: var(--success-color);
+}
+.btn-approve:hover {
+  background-color: var(--success-dark);
+}
+.btn-reject {
+  background-color: var(--danger-color);
+}
+.btn-reject:hover {
+  background-color: var(--danger-dark);
+}
+.btn-print {
+  background-color: var(--success-color);
+  color: white;
+}
+.btn-print:hover {
+  background-color: var(--success-dark);
+}
+.action-cell .btn-sm:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+}
+
+/* --- PRINT STYLES --- */
+.print-only {
+  display: none;
+}
+.screen-only {
+  display: block;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  body {
+    background-color: #fff !important;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+
+  .card-print {
+    border: none;
+  }
+
+  .card-header-print {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #333;
+  }
+  .header-brand-print {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .header-brand-print img {
+    height: 50px;
+    width: auto;
+  }
+  .company-title {
+    color: #0056b3;
+    font-weight: bold;
+    font-size: 14pt;
+    margin: 0;
+  }
+  .title {
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0;
+  }
+  .subtitle {
+    font-size: 10pt;
+    color: #555;
+    margin: 0;
+  }
+  .header-meta-print {
+    text-align: left;
+    font-size: 10pt;
+  }
+  .header-meta-print div {
+    margin-bottom: 5px;
+  }
+  .header-meta-print strong {
+    color: #0056b3;
+    display: inline-block;
+    width: 60px;
+  }
+
+  .card-content-print {
+    margin-top: 1cm;
+  }
+  .card-content-print p {
+    font-size: 10pt;
+    margin-bottom: 10px;
+  }
+
+  .table-wrap-print table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+  .table-wrap-print th,
+  .table-wrap-print td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  .table-wrap-print thead th {
+    background-color: #e9ecef;
+    font-weight: bold;
+  }
+
+  .signatures-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5cm;
+    page-break-inside: avoid;
+    font-size: 10pt;
+  }
+  .signatures-print-table th,
+  .signatures-print-table td {
+    border: 1px solid #333;
+    padding: 5px;
+    text-align: center;
+  }
+  .signatures-print-table thead th {
+    background-color: #e9ecef;
+    font-weight: bold;
+  }
+  .signature-space-row td {
+    height: 70px;
+    position: relative;
+  }
+  .signature-name-row td {
+    font-weight: bold;
+    text-decoration: underline;
+    vertical-align: bottom;
+    padding-top: 0;
+  }
+  .signature-role-row td {
+    font-weight: bold;
+  }
+
+  .stamp-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+  }
+  .stamp {
+    border: 3px solid #28a745;
+    color: #28a745;
+    font-size: 14pt;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 5px;
+    transform: rotate(-10deg);
+    background-color: rgba(40, 167, 69, 0.05);
+    font-family: "Courier New", Courier, monospace;
+  }
+  .approval-date {
+    font-size: 8pt;
+    color: #333;
+    margin-top: 5px;
+    font-style: italic;
+  }
+}
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+    margin: 0;
+  }
+
+  .header {
+    flex-direction: column; /* Susun header ke bawah */
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .header h1 {
+    font-size: 24px; /* Perkecil ukuran judul */
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Buat tombol sejajar */
+  }
+
+  /* Mengubah tabel menjadi tampilan kartu */
+  .table-wrapper {
+    border: none;
+    box-shadow: none;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    background-color: var(--panel-color);
+    box-shadow: var(--shadow);
+  }
+
+  td {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    padding-left: 50%; /* Sisakan ruang untuk label */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: right; /* Ratakan konten ke kanan */
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
+
+  td:before {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left; /* Ratakan label ke kiri */
+    font-weight: 600;
+    color: var(--muted-color);
+  }
+
+  /* Menambahkan label untuk setiap sel data */
+  td:nth-of-type(1):before {
+    content: "PR NO.";
+  }
+  td:nth-of-type(2):before {
+    content: "URAIAN";
+  }
+  td:nth-of-type(3):before {
+    content: "JUMLAH";
+  }
+  td:nth-of-type(4):before {
+    content: "STATUS";
+  }
+  td:nth-of-type(5):before {
+    content: "AKSI";
+  }
+
+  .action-cell {
+    justify-content: flex-end; /* Ratakan tombol ke kanan */
+  }
+}

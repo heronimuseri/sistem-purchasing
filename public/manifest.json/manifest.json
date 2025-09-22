@@ -1,0 +1,21 @@
+{
+  "name": "Purchasing System SPA",
+  "short_name": "Purchasing",
+  "start_url": "/Login.html",
+  "display": "standalone",
+  "background_color": "#f9f9f7",
+  "theme_color": "#6A7B31",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
