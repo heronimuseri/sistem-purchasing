@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Purchase Request - Purchasing System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="pr_detail.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div id="loading-state">
+        <p class="loading-text">Memuat data detail PR...</p>
+      </div>
+
+      <div id="main-content" class="hidden">
+        <div class="header">
+          <h1>
+            <i class="fa-solid fa-file-invoice"></i> Detail Purchase Request
+          </h1>
+          <div class="header-actions">
+            <a href="daftarpr.html" class="btn btn-secondary"
+              >Kembali ke Daftar PR</a
+            >
+          </div>
+        </div>
+
+        <div class="card info-grid">
+          <div><label>PR No.</label><span id="detail-pr-no"></span></div>
+          <div><label>Tanggal</label><span id="detail-tanggal"></span></div>
+          <div>
+            <label>Diminta Oleh</label><span id="detail-requester"></span>
+          </div>
+          <div>
+            <label>Status</label><span id="detail-status" class="status"></span>
+          </div>
+          <div class="uraian">
+            <label>Untuk Kebutuhan / Uraian</label
+            ><span id="detail-keperluan"></span>
+          </div>
+        </div>
+
+        <h2>Detail Barang</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Jenis Material</th>
+                <th>Qty</th>
+                <th>Satuan</th>
+              </tr>
+            </thead>
+            <tbody id="detail-items-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script src="pr_detail.js"></script>
+  </body>
+</html>

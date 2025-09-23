@@ -2,20 +2,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 :root {
-  --bg-color: #f7f8fc;
+  --primary-color: #6a7b31; /* Hijau dari logo */
+  --primary-dark: #4e5c25; /* Hijau lebih gelap untuk hover */
+  --accent-color: #f2bf4e; /* Kuning dari logo */
+  --bg-color: #f9f9f7;
   --panel-color: #ffffff;
-  --text-color: #343a40;
+  --text-color: #333333;
   --muted-color: #6c757d;
-  --primary-color: #0ea5e9;
-  --success-color: #22c55e;
-  --success-dark: #16a34a;
-  --danger-color: #ef4444;
-  --danger-dark: #dc2626;
-  --pending-bg: #fffbeb;
-  --pending-text: #f59e0b;
+  --border-color: #e9ecef;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   --border-radius: 12px;
-  --border-color: #e9ecef;
+  --status-pending-bg: #fffbeb;
+  --status-pending-text: #f59e0b;
+  --status-approved-bg: #ecfdf5;
+  --status-approved-text: #059669;
+  --status-rejected-bg: #fef2f2;
+  --status-rejected-text: #ef4444;
+  --success-color: #22c55e;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b; /* Warna untuk tombol Review */
+  --warning-dark: #d97706;
 }
 
 * {
@@ -94,81 +100,78 @@ body {
 #searchInput:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+  box-shadow: 0 0 0 3px rgba(106, 123, 49, 0.2);
 }
 
 .table-wrapper {
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
+  background-color: var(--panel-color);
   border-radius: var(--border-radius);
-  overflow: hidden;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--panel-color);
 }
 
-th,
-td {
-  padding: 14px 18px;
+table thead th {
   text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--border-color);
-}
-
-th {
+  padding: 15px 20px;
   background-color: #f8f9fa;
-  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
   font-size: 12px;
-  text-transform: uppercase;
+  font-weight: 600;
   color: var(--muted-color);
+  text-transform: uppercase;
 }
 
-tbody tr:last-child td {
+table tbody td {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+table tbody tr:last-child td {
   border-bottom: none;
 }
 
-tbody tr:hover {
-  background-color: #f8f9fa;
+table tbody tr:hover {
+  background-color: #fcfcfc;
 }
 
 .status {
-  padding: 4px 12px;
-  border-radius: 99px;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
-.status.fully-approved {
-  background-color: #dcfce7;
-  color: var(--success-dark);
-}
 .status.pending-ktu-approval,
 .status.pending-manager-approval {
-  background-color: var(--pending-bg);
-  color: var(--pending-text);
+  background-color: var(--status-pending-bg);
+  color: var(--status-pending-text);
+}
+.status.fully-approved {
+  background-color: var(--status-approved-bg);
+  color: var(--status-approved-text);
 }
 .status.rejected {
-  background-color: #fee2e2;
-  color: var(--danger-dark);
+  background-color: var(--status-rejected-bg);
+  color: var(--status-rejected-text);
 }
 .loading-text {
   text-align: center;
+  padding: 20px;
   color: var(--muted-color);
-  padding: 40px;
-}
-button:disabled {
-  background-color: #e9ecef;
-  color: #adb5bd;
-  cursor: not-allowed;
 }
 
 .action-cell {
   display: flex;
   flex-direction: row;
   gap: 8px;
-  min-width: 210px;
+  min-width: 320px;
 }
 
 .action-cell .btn-sm {
@@ -184,30 +187,29 @@ button:disabled {
   justify-content: center;
   gap: 6px;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .btn-approve {
   background-color: var(--success-color);
 }
-.btn-approve:hover {
-  background-color: var(--success-dark);
-}
 .btn-reject {
   background-color: var(--danger-color);
 }
-.btn-reject:hover {
-  background-color: var(--danger-dark);
+.btn-review {
+  background-color: var(--warning-color);
+}
+.btn-review:hover {
+  background-color: var(--warning-dark);
 }
 .btn-print {
   background-color: var(--success-color);
   color: white;
 }
-.btn-print:hover {
-  background-color: var(--success-dark);
-}
 .action-cell .btn-sm:disabled {
   background-color: #e9ecef;
   color: #adb5bd;
+  cursor: not-allowed;
 }
 
 /* --- PRINT STYLES --- */
@@ -364,104 +366,5 @@ button:disabled {
     color: #333;
     margin-top: 5px;
     font-style: italic;
-  }
-}
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-    margin: 0;
-  }
-
-  .header {
-    flex-direction: column; /* Susun header ke bawah */
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .header h1 {
-    font-size: 24px; /* Perkecil ukuran judul */
-  }
-
-  .header-actions {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Buat tombol sejajar */
-  }
-
-  /* Mengubah tabel menjadi tampilan kartu */
-  .table-wrapper {
-    border: none;
-    box-shadow: none;
-  }
-
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-  }
-
-  thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-
-  tr {
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    margin-bottom: 15px;
-    background-color: var(--panel-color);
-    box-shadow: var(--shadow);
-  }
-
-  td {
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    position: relative;
-    padding-left: 50%; /* Sisakan ruang untuk label */
-    padding-top: 10px;
-    padding-bottom: 10px;
-    text-align: right; /* Ratakan konten ke kanan */
-  }
-
-  td:last-child {
-    border-bottom: none;
-  }
-
-  td:before {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
-    text-align: left; /* Ratakan label ke kiri */
-    font-weight: 600;
-    color: var(--muted-color);
-  }
-
-  /* Menambahkan label untuk setiap sel data */
-  td:nth-of-type(1):before {
-    content: "PR NO.";
-  }
-  td:nth-of-type(2):before {
-    content: "URAIAN";
-  }
-  td:nth-of-type(3):before {
-    content: "JUMLAH";
-  }
-  td:nth-of-type(4):before {
-    content: "STATUS";
-  }
-  td:nth-of-type(5):before {
-    content: "AKSI";
-  }
-
-  .action-cell {
-    justify-content: flex-end; /* Ratakan tombol ke kanan */
   }
 }

@@ -2,7 +2,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -165,12 +165,10 @@ app.post("/api/requests/:id/approve", (req, res) => {
     nextStatus = "Fully Approved";
     request.approvals.manager = approvalTime;
   } else {
-    return res
-      .status(403)
-      .json({
-        success: false,
-        message: "Anda tidak memiliki hak untuk menyetujui tahap ini.",
-      });
+    return res.status(403).json({
+      success: false,
+      message: "Anda tidak memiliki hak untuk menyetujui tahap ini.",
+    });
   }
   request.status = nextStatus;
   res.json({ success: true, message: `Permintaan #${request.id} disetujui.` });
@@ -254,12 +252,10 @@ app.put("/api/admin/users/:id", (req, res) => {
       .status(404)
       .json({ success: false, message: "User tidak ditemukan." });
   if (!name || !user || !role)
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Nama, User ID, dan Peran wajib diisi.",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Nama, User ID, dan Peran wajib diisi.",
+    });
 
   users[userIndex].name = name;
   users[userIndex].user = user;
