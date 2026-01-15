@@ -4,24 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Panel - Purchasing System</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-    <link rel="stylesheet" href="admin.css" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#6A7B31" />
+    <link rel="stylesheet" href="/css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SPA PR">
   </head>
   <body>
     <div class="admin-container">
       <nav class="sidebar">
         <div class="sidebar-header">
           <h3>Admin Panel</h3>
-          <span id="admin-name"></span>
+          <span id="admin-name">Admin User</span>
         </div>
         <ul class="sidebar-nav">
           <li>
-            <a href="admin_user.html" class="nav-link"
+            <a href="#" class="nav-link" data-target="content-user"
               ><i class="fa-solid fa-users-gear"></i> Master User</a
             >
           </li>
@@ -58,21 +58,243 @@
           </p>
         </section>
 
+        <section id="content-user" class="content-section hidden">
+          <div class="content-header">
+            <h1>Master User & Konfigurasi WA</h1>
+          </div>
+          <p>
+            Kelola data user, role (Kerani, KTU, EM), dan nomor WhatsApp (WA)
+            untuk notifikasi approval.
+          </p>
+
+          <div class="content-container">
+            <div class="user-layout">
+              <div class="user-form-wrapper">
+                <div class="card">
+                  <h2 id="user-form-title">Tambah User Baru</h2>
+                  <form id="form-user">
+                    <input type="hidden" id="user-id" />
+                    <input type="hidden" id="user-company-hidden" />
+
+                    <div class="form-group">
+                      <label for="user-name">Nama Lengkap</label>
+                      <input
+                        type="text"
+                        id="user-name"
+                        required
+                        placeholder="Masukkan nama user"
+                      />
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="user-username">Username</label>
+                      <input
+                        type="text"
+                        id="user-username"
+                        required
+                        placeholder="Masukkan username user"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="user-password">Password</label>
+                      <input
+                        type="password"
+                        id="user-password"
+                        required 
+                        placeholder="Isi jika tambah baru"
+                      />
+                      <small
+                        >Wajib diisi saat Tambah User. Untuk Edit, gunakan tombol
+                        'Pass' di tabel.</small
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <label for="user-role">Role Approval</label>
+                      <select id="user-role" required>
+                        <option value="">Pilih Role</option>
+                        <option value="kerani">kerani</option>
+                        <option value="ktu">ktu</option>
+                        <option value="manager">manager</option>
+                        <option value="admin">admin</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="user-wa">Nomor WhatsApp</label>
+                      <input
+                        type="tel"
+                        id="user-wa"
+                        required
+                        placeholder="Contoh: 6281234567890"
+                      />
+                      <small
+                        >Gunakan format internasional (62) tanpa tanda + atau 0
+                        di depan.</small
+                      >
+                    </div>
+                    <div class="form-group">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="btn-save-user"
+                      >
+                        Simpan User
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="btn-cancel-edit"
+                        style="display: none"
+                      >
+                        Batal
+                      </button>
+                    </div>
+                  </form>
+                  <div id="user-notification" class="notification"></div>
+                </div>
+
+                <div class="card">
+                  <h2>Konfigurasi Grup WA Posting</h2>
+                  <p>
+                    Atur ID/Nomor Grup WA untuk notifikasi otomatis setelah
+                    approval final (manager).
+                  </p>
+                  <form id="form-group-wa">
+                    <div class="form-group">
+                      <label for="group-wa-id">ID/Nomor Grup WA</label>
+                      <input
+                        type="text"
+                        id="group-wa-id"
+                        required
+                        placeholder="Masukkan ID Grup WA"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary">
+                        Simpan Konfigurasi
+                      </button>
+                    </div>
+                  </form>
+                  <div id="group-wa-notification" class="notification"></div>
+                </div>
+              </div>
+
+              <div class="user-list-wrapper">
+                <div class="card">
+                  <h2>Daftar User</h2>
+                  <div class="table-responsive">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Perusahaan</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Nomor WA</th>
+                            <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody id="user-table-body"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+
         <section id="content-vendor" class="content-section hidden">
           <div class="content-header"><h1>Master Vendor</h1></div>
           <p>Fitur ini sedang dalam pengembangan.</p>
         </section>
+
         <section id="content-material" class="content-section hidden">
           <div class="content-header"><h1>Master Material</h1></div>
           <p>Fitur ini sedang dalam pengembangan.</p>
         </section>
+
         <section id="content-settings" class="content-section hidden">
           <div class="content-header"><h1>Pengaturan</h1></div>
-          <p>Fitur ini sedang dalam pengembangan.</p>
+
+          <div class="content-container">
+            <div class="card settings-card">
+              <h2>Reset Nomor Purchase Request (PR)</h2>
+              <p>
+                Gunakan fitur ini untuk mengatur ulang nomor urut awal PR untuk
+                periode saat ini. Format: XXX/PR-SPA/HO/[Bulan Romawi]/[Tahun].
+              </p>
+
+              <form id="form-reset-pr">
+                <div class="form-group">
+                  <label for="current-pr-reference"
+                    >Nomor PR Terakhir Digunakan (Referensi)</label
+                  >
+                  <input
+                    type="text"
+                    id="current-pr-reference"
+                    disabled
+                    placeholder="Memuat data referensi..."
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="new-pr-start-number"
+                    >Setel Nomor Urut Awal (XXX) Menjadi:</label
+                  >
+                  <input
+                    type="number"
+                    id="new-pr-start-number"
+                    min="1"
+                    max="999"
+                    required
+                    placeholder="Contoh: 1"
+                  />
+                  <small
+                    >Masukkan angka awal. PR baru berikutnya akan menggunakan
+                    nomor ini.</small
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label>Pratinjau Nomor PR Berikutnya:</label>
+                  <div id="pr-preview"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                  Simpan Pengaturan
+                </button>
+              </form>
+
+              <div id="settings-notification" class="notification"></div>
+            </div>
+          </div>
         </section>
       </main>
     </div>
-    <script src="admin.js"></script>
+
+    <div id="password-modal" class="modal" style="display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.4);">
+        <div class="modal-content card" style="background-color: #fefefe; margin: 10vh auto; padding: 25px; border: 1px solid #e0e0e0; max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <span class="close-button" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer; line-height: 1; margin-top: -15px;">&times;</span>
+            <h2>Ubah Password User</h2>
+            <form id="form-edit-password">
+                <input type="hidden" id="edit-password-user-id">
+                <p>Mengubah password untuk user: <strong id="edit-password-username-display"></strong></p>
+                <div class="form-group">
+                    <label for="new-password">Password Baru</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Konfirmasi Password</label>
+                    <input type="password" id="confirm-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Simpan Password</button>
+            </form>
+            <div id="password-notification" class="notification" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script src="/js/pwa.js"></script>
+    <script src="/js/admin.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {

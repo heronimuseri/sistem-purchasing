@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Purchase Request - Purchasing System</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-    <link rel="stylesheet" href="pr_detail.css" />
+    <link rel="stylesheet" href="/css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/pr_detail.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SPA PR" />
   </head>
   <body>
     <div class="container">
@@ -48,10 +50,10 @@
           <table>
             <thead>
               <tr>
-                <th>No</th>
-                <th>Jenis Material</th>
-                <th>Qty</th>
-                <th>Satuan</th>
+                <th style="width: 5%">No</th>
+                <th>Nama & Spesifikasi Barang</th>
+                <th style="width: 10%">Qty</th>
+                <th style="width: 15%">Satuan</th>
               </tr>
             </thead>
             <tbody id="detail-items-body"></tbody>
@@ -59,6 +61,7 @@
         </div>
       </div>
     </div>
-    <script src="pr_detail.js"></script>
+    <script src="/js/pwa.js"></script>
+    <script src="/js/pr_detail.js"></script>
   </body>
 </html>

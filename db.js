@@ -1,35 +1,48 @@
-// PASTIKAN BARIS INI ADA DI PALING ATAS
-require("dotenv").config();
+// db.js (Railway Compatible)
 
-const { Pool } = require("pg");
+// Gunakan 'mysql2/promise' agar kita bisa memakai async/await
+const mysql = require("mysql2/promise");
 
-// Cek apakah DATABASE_URL berhasil dimuat
-if (!process.env.DATABASE_URL) {
-  console.error("Error: Variabel DATABASE_URL tidak ditemukan di file .env");
-  process.exit(1); // Keluar dari aplikasi jika URL tidak ada
+// Konfigurasi koneksi ke database
+// Support Railway MySQL (via MYSQL_URL) atau environment variables terpisah
+let poolConfig;
+
+if (process.env.MYSQL_URL) {
+  // Railway MySQL menggunakan URL connection string
+  poolConfig = {
+    uri: process.env.MYSQL_URL,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  };
+  console.log("📡 Menggunakan MYSQL_URL untuk koneksi database (Railway)");
+} else {
+  // Fallback ke environment variables terpisah (development lokal)
+  poolConfig = {
+    host: process.env.DB_HOST || "localhost",
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "sistem_purchasing",
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  };
+  console.log("🏠 Menggunakan konfigurasi lokal untuk database");
 }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+const pool = mysql.createPool(poolConfig);
 
-async function getAllProducts() {
-  let client;
-  try {
-    client = await pool.connect();
-    const result = await client.query("SELECT * FROM products ORDER BY id");
-    console.log("Data Produk:", result.rows);
-    return result.rows;
-  } catch (err) {
-    console.error("Gagal mengambil data produk:", err);
-  } finally {
-    if (client) {
-      client.release();
-    }
-  }
-}
+// (Opsional) Tambahkan kode ini untuk mengecek apakah koneksi berhasil saat server pertama kali jalan
+pool
+  .getConnection()
+  .then((connection) => {
+    console.log("🚀 Berhasil terhubung ke database MySQL!");
+    connection.release(); // Lepaskan koneksi setelah selesai
+  })
+  .catch((err) => {
+    console.error("❌ GAGAL terhubung ke database:", err.message);
+  });
 
-getAllProducts();
+// Ekspor 'pool' agar bisa digunakan di file lain (seperti server.js)
+module.exports = pool;

@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Master User - Admin Panel</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-    <link rel="stylesheet" href="admin_user.css" />
+    <link rel="stylesheet" href="/css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/admin_user.css" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#6A7B31" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SPA PR" />
   </head>
   <body>
     <div class="container">
@@ -57,12 +57,16 @@
         <form id="user-form">
           <input type="hidden" id="user-id" />
           <div class="field">
-            <label for="user-name">Nama Lengkap</label
-            ><input type="text" id="user-name" required />
+            <label for="user-name">Nama Lengkap</label>
+            <input type="text" id="user-name" required />
           </div>
           <div class="field">
-            <label for="user-userid">User ID (untuk login)</label
-            ><input type="text" id="user-userid" required />
+            <label for="user-userid">User ID (untuk login)</label>
+            <input type="text" id="user-userid" required />
+          </div>
+          <div class="field">
+            <label for="user-company">Company ID</label>
+            <input type="text" id="user-company" required />
           </div>
           <div class="field">
             <label for="user-role">Peran (Role)</label>
@@ -90,8 +94,8 @@
         </form>
       </div>
     </div>
-
-    <script src="admin_user.js"></script>
+    <script src="/js/pwa.js"></script>
+    <script src="/js/admin_user.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
