@@ -106,4 +106,9 @@ CREATE TABLE IF NOT EXISTS invoice_counters (
     last_seq INT DEFAULT 0
 );
 
+-- ===========================================
+-- CRITICAL: Update users table role ENUM
+-- ===========================================
+ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'kerani', 'ktu', 'manager', 'purchasing', 'manager_ho', 'direktur') NOT NULL DEFAULT 'kerani';
+
 SET FOREIGN_KEY_CHECKS=1;
