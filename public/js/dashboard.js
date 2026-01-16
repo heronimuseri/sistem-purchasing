@@ -24,4 +24,29 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.clear();
     window.location.href = "/login.html";
   });
+
+  // --- Badge Notifikasi (New) ---
+  updateDashboardBadge();
 });
+
+async function updateDashboardBadge() {
+  const badge = document.getElementById("dashboard-badge");
+  if (!badge) return;
+
+  try {
+    const response = await fetch("/api/notifications/count", { credentials: "include" });
+    if (response.ok) {
+      const data = await response.json();
+      const count = data.pendingCount || 0;
+
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = "flex";
+      } else {
+        badge.style.display = "none";
+      }
+    }
+  } catch (error) {
+    console.error("Gagal mengambil notifikasi untuk dashboard:", error);
+  }
+}

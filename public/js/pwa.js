@@ -167,14 +167,10 @@ class PWAHelper {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       this.deferredPrompt = e;
+      console.log("PWA: beforeinstallprompt fired. Triggering auto-prompt...");
 
+      // AUTO PROMPT: Langsung tampilkan modal install saat event muncul
       this.showInstallPrompt();
-
-      setTimeout(() => {
-        if (this.deferredPrompt) {
-          this.showInstallPrompt();
-        }
-      }, 30000);
     });
 
     window.addEventListener("appinstalled", () => {
