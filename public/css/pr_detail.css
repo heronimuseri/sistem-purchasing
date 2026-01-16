@@ -24,22 +24,26 @@
   margin: 0;
   padding: 0;
 }
+
 body {
   font-family: "Poppins", sans-serif;
   color: var(--text-color);
   background-color: var(--bg-color);
 }
+
 .container {
   max-width: 900px;
   margin: 40px auto;
   padding: 20px;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
 }
+
 .header h1 {
   font-size: 28px;
   font-weight: 600;
@@ -47,6 +51,7 @@ body {
   align-items: center;
   gap: 15px;
 }
+
 .header-actions {
   display: flex;
   gap: 10px;
@@ -64,10 +69,12 @@ body {
   cursor: pointer;
   text-decoration: none;
 }
+
 .btn-secondary {
   background-color: #e5e7eb;
   color: var(--text-color);
 }
+
 .btn-secondary:hover {
   background-color: #d1d5db;
 }
@@ -79,16 +86,19 @@ body {
   padding: 30px;
   border: 1px solid var(--border-color);
 }
+
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px 30px;
   margin-bottom: 40px;
 }
+
 .info-grid div {
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
 }
+
 .info-grid label {
   display: block;
   font-size: 13px;
@@ -97,11 +107,14 @@ body {
   text-transform: uppercase;
   font-weight: 500;
 }
+
 .info-grid span {
   font-size: 16px;
   font-weight: 600;
 }
-.info-grid .uraian {
+
+.info-grid .uraian,
+.info-grid .reject-reason {
   grid-column: 1 / -1;
 }
 
@@ -119,11 +132,13 @@ h2 {
   border-radius: var(--border-radius);
   overflow: hidden;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: var(--panel-color);
 }
+
 th,
 td {
   padding: 14px 18px;
@@ -131,6 +146,7 @@ td {
   vertical-align: middle;
   border-bottom: 1px solid var(--border-color);
 }
+
 th {
   background-color: #f8f9fa;
   font-weight: 600;
@@ -138,6 +154,7 @@ th {
   text-transform: uppercase;
   color: var(--muted-color);
 }
+
 tbody tr:last-child td {
   border-bottom: none;
 }
@@ -148,15 +165,18 @@ tbody tr:last-child td {
   font-size: 12px;
   font-weight: 600;
 }
+
 .status.fully-approved {
   background-color: var(--status-approved-bg);
   color: var(--status-approved-text);
 }
+
 .status.pending-ktu-approval,
 .status.pending-manager-approval {
   background-color: var(--status-pending-bg);
   color: var(--status-pending-text);
 }
+
 .status.rejected {
   background-color: var(--status-rejected-bg);
   color: var(--status-rejected-text);
@@ -165,6 +185,7 @@ tbody tr:last-child td {
 .hidden {
   display: none;
 }
+
 .loading-text {
   text-align: center;
   color: var(--muted-color);

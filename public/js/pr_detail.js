@@ -43,6 +43,15 @@ async function loadPRDetails(id) {
     statusEl.textContent = pr.status;
     statusEl.className = `status ${pr.status.toLowerCase().replace(/ /g, "-")}`;
 
+    // Tampilkan alasan penolakan jika ada
+    const rejectReasonContainer = document.getElementById("detail-reject-reason-container");
+    if (pr.status === "Rejected" && pr.reject_reason) {
+      document.getElementById("detail-reject-reason").textContent = pr.reject_reason;
+      rejectReasonContainer.classList.remove("hidden");
+    } else {
+      rejectReasonContainer.classList.add("hidden");
+    }
+
     // Mengisi tabel item barang
     const tableBody = document.getElementById("detail-items-body");
     tableBody.innerHTML = "";
