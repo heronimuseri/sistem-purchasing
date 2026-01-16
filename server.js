@@ -279,6 +279,33 @@ app.get("/debug-auth", async (req, res) => {
   }
 });
 
+// Endpoint Paksa Reset Admin (Solusi Pamungkas)
+app.get("/force-reset-admin", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    // Hash untuk 'admin123'
+    const hash = "$2b$10$2/jij.4L8FDzfDJFZy4kAOs88ZiOE0SjS30gNfE1l/OnRQFwXNube";
+
+    const [result] = await connection.query(
+      "UPDATE users SET pass = ?, company = 'PT SPA' WHERE user = 'admin'",
+      [hash]
+    );
+    connection.release();
+
+    res.send(`
+      <h1>Admin Reset Berhasil!</h1>
+      <p>Password direset ke: <b>admin123</b></p>
+      <p>Company ID: <b>PT SPA</b></p>
+      <p>Rows affected: ${result.affectedRows}</p>
+      <br>
+      <a href='/'>Login Sekarang</a>
+    `);
+
+  } catch (error) {
+    res.status(500).send("Error: " + error.message);
+  }
+});
+
 // Rute default untuk menyajikan halaman login
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "Login.html"));
