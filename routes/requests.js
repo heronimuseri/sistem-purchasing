@@ -128,6 +128,26 @@ router.get("/", async (req, res) => {
   }
 });
 
+// --- RUTE UNTUK RINGKASAN DASHBOARD (KTU/MANAGER) ---
+router.get("/summary", async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'Pending KTU Approval' THEN 1 ELSE 0 END) as pending_ktu,
+        SUM(CASE WHEN status = 'Pending Manager Approval' THEN 1 ELSE 0 END) as pending_manager,
+        SUM(CASE WHEN status = 'Fully Approved' THEN 1 ELSE 0 END) as approved,
+        SUM(CASE WHEN status = 'Rejected' THEN 1 ELSE 0 END) as rejected
+      FROM purchase_requests
+    `;
+    const [rows] = await pool.query(query);
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error fetching summary:", error);
+    res.status(500).json({ success: false, message: "Gagal mengambil ringkasan." });
+  }
+});
+
 // --- RUTE UNTUK MELIHAT DETAIL SATU PR ---
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
