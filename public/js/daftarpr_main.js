@@ -319,18 +319,28 @@ async function updateRequestStatus(id, action, confirmText) {
       credentials: "include",
     });
 
-    const result = await response.json();
-    console.log("Server response:", result);
-
-    alert(result.message);
-
-    if (response.ok) {
-      loadPurchaseRequests();
-      fetchNotificationCount();
+    let result;
+    try {
+      result = await response.json();
+    } catch (e) {
+      if (!response.ok) {
+        throw new Error(`Server Error (${response.status})`);
+      }
+      throw new Error("Respon server tidak valid (bukan JSON).");
     }
+
+    if (!response.ok) {
+      throw new Error(result.message || `Gagal: ${response.statusText}`);
+    }
+
+    alert(result.message || "Berhasil memperbarui status.");
+
+    loadPurchaseRequests();
+    fetchNotificationCount();
+
   } catch (error) {
     console.error(`Gagal ${action} permintaan:`, error);
-    alert("Terjadi kesalahan jaringan saat memperbarui status.");
+    alert(`TERJADI KESALAHAN:\n${error.message}`);
   }
 }
 
