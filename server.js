@@ -234,7 +234,7 @@ app.get("/init-db", async (req, res) => {
     // Insert admin user
     const insertAdmin = `
     INSERT INTO users (company, \`user\`, pass, role, name, wa_number) VALUES 
-    ('PT SPA', 'admin', '$2b$10$rKN3r9O5QZv0d7Xz8V2pZuQxj3KzW5r6yVvGpM1wH8nL4jC0eF2Ki', 'admin', 'Administrator', '081234567890')
+    ('PT SPA', 'admin', '$2b$10$2/jij.4L8FDzfDJFZy4kAOs88ZiOE0SjS30gNfE1l/OnRQFwXNube', 'admin', 'Administrator', '081234567890')
     ON DUPLICATE KEY UPDATE name = name`;
 
     await connection.query(insertAdmin);
