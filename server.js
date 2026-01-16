@@ -129,6 +129,8 @@ app.use("/api/admin/vendors", isAuthenticated, isAdmin, vendorRoutes);
 app.use("/api/settings", isAuthenticated, settingsRoutes);
 app.use("/api/notifications", isAuthenticated, notificationRoutes); // Register notification routes
 app.use("/api/po", isAuthenticated, poRoutes); // Register PO routes
+app.use("/api/invoices", isAuthenticated, require("./routes/invoices")); // Register Invoice routes
+
 
 // ==========================================================
 // ## LAPORAN & NOTIFICATION ENDPOINTS ##

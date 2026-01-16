@@ -45,6 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (poSection) {
       poSection.classList.remove("hidden");
     }
+
+    // Show Finance/Invoice Section (Same roles for now as it relates to PO)
+    const financeSection = document.getElementById("finance-section");
+    if (financeSection) {
+      financeSection.classList.remove("hidden");
+    }
   }
 
   // Fungsi logout
