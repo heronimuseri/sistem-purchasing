@@ -119,11 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Search input listener added");
   }
 
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", logout);
-    console.log("Logout button listener added");
-  }
+
 
   const requestsTableBody = document.getElementById("requests-table-body");
   if (requestsTableBody) {
@@ -143,11 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // FUNGSI APLIKASI INTI (UNTUK HALAMAN RINGKASAN)
 // =================================================
 
-function logout() {
-  console.log("Logging out user");
-  localStorage.clear();
-  window.location.href = "/login.html";
-}
+
 
 /**
  * Memuat data Purchase Request untuk halaman ringkasan.
