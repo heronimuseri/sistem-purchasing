@@ -27,14 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // === FUNGSI MODAL (Hanya untuk Tambah User) ===
-const modalOverlay = document.getElementById('user-modal-overlay');
-const userForm = document.getElementById('user-form');
-const modalTitle = document.getElementById('modal-title');
+const modalOverlay = document.getElementById('user-modal-overlay'); // This might also be wrong? Need to check.
+const userForm = document.getElementById('form-user');
+const modalTitle = document.getElementById('user-form-title'); // Was 'modal-title' which also seems wrong based on admin.html
 
 function showUserModal() {
     userForm.reset();
     modalTitle.textContent = 'Tambah User Baru';
     document.getElementById('user-id').value = '';
+    document.getElementById('user-company').value = '';
     document.getElementById('user-password').placeholder = "Password wajib diisi";
     document.getElementById('user-password').required = true;
     modalOverlay.classList.remove('hidden');
@@ -73,9 +74,11 @@ async function handleFormSubmit(e) {
     // Fungsi ini hanya untuk MENAMBAH user baru
     const userData = {
         name: document.getElementById('user-name').value,
-        user: document.getElementById('user-userid').value,
+        company: document.getElementById('user-company').value,
+        user: document.getElementById('user-username').value,
         role: document.getElementById('user-role').value,
-        pass: document.getElementById('user-password').value
+        pass: document.getElementById('user-password').value,
+        waNumber: document.getElementById('user-wa').value
     };
     if (!userData.pass) return alert('Password wajib diisi untuk user baru.');
 
