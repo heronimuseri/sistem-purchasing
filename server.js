@@ -306,6 +306,12 @@ app.get("/force-reset-admin", async (req, res) => {
   }
 });
 
+// FAIL-SAFE: Redirect Login.html (Kapital) ke login.html (Huruf kecil)
+// Ini menangani cache browser lama yang masih request ke file kapital
+app.get("/Login.html", (req, res) => {
+  res.redirect("/login.html");
+});
+
 // Rute default untuk menyajikan halaman login
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
