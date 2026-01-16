@@ -354,6 +354,23 @@ app.get("/force-reset-admin", async (req, res) => {
   }
 });
 
+// Endpoint Manual Migrasi PO (Jalankan via Browser)
+app.get("/migrate-po", async (req, res) => {
+  try {
+    const runMigrations = require('./utils/dbMigrate');
+    await runMigrations();
+    res.send(`
+      <h1>Migrasi PO Berhasil Dijalankan!</h1>
+      <p>Cek halaman Admin > Database untuk melihat tabel system (po_items, invoices, dll).</p>
+      <p>Coba Tambah User role 'purchasing' sekarang.</p>
+      <a href='/admin.html'>Kembali ke Admin Panel</a>
+    `);
+  } catch (error) {
+    console.error("Migration Route Error:", error);
+    res.status(500).send("<h1>Migrasi Gagal</h1><p>" + error.message + "</p>");
+  }
+});
+
 // FAIL-SAFE: Redirect Login.html (Kapital) ke login.html (Huruf kecil)
 // Ini menangani cache browser lama yang masih request ke file kapital
 app.get("/Login.html", (req, res) => {
