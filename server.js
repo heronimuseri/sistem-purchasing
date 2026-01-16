@@ -222,7 +222,7 @@ app.get("/init-db", async (req, res) => {
         pass VARCHAR(255) NOT NULL,
         role ENUM('admin', 'kerani', 'ktu', 'manager', 'purchasing', 'manager_ho', 'direktur') NOT NULL DEFAULT 'kerani',
         name VARCHAR(100) NOT NULL,
-        wa_number VARCHAR(20) UNIQUE,
+        wa_number VARCHAR(20),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
@@ -240,6 +240,7 @@ app.get("/init-db", async (req, res) => {
         approval_ktu_date DATETIME DEFAULT NULL,
         manager_name VARCHAR(100) DEFAULT NULL,
         approval_manager_date DATETIME DEFAULT NULL,
+        reject_reason TEXT DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
@@ -265,6 +266,23 @@ app.get("/init-db", async (req, res) => {
         pic VARCHAR(255),
         no_hp VARCHAR(50),
         alamat TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        endpoint TEXT NOT NULL,
+        keys_p256dh TEXT NOT NULL,
+        keys_auth TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS system_settings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        setting_key VARCHAR(100) NOT NULL UNIQUE,
+        setting_value TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
