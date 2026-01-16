@@ -14,8 +14,6 @@ const requestRoutes = require("./routes/requests");
 const userRoutes = require("./routes/users");
 const masterRoutes = require("./routes/master");
 const databaseRoutes = require("./routes/database");
-const masterRoutes = require("./routes/master");
-const databaseRoutes = require("./routes/database");
 const vendorRoutes = require("./routes/vendors");
 const settingsRoutes = require("./routes/settings");
 
