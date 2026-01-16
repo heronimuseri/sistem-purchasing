@@ -1,9 +1,9 @@
 // File: /sw.js
 
 // --- Konfigurasi Cache ---
-const CACHE_VERSION = "2.4-force-refresh"; // FORCE UPDATE V2.4
+const CACHE_VERSION = "2.5-logo-update"; // LOGO UPDATE v2.5
 const STATIC_CACHE = `spa-pr-static-v${CACHE_VERSION}`;
-const DYNAMIC_CACHE = "spa-pr-dynamic-v2.4";
+const DYNAMIC_CACHE = "spa-pr-dynamic-v2.5";
 
 // Asset yang akan di-cache saat install (Diperbarui agar sesuai dengan daftarpr.html)
 const STATIC_ASSETS = [
