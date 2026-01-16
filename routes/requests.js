@@ -343,10 +343,16 @@ Silakan proses lebih lanjut.`;
 // --- RUTE UNTUK PROSES REJECT ---
 router.post("/:id/reject", async (req, res) => {
   const { id } = req.params;
-  const { reason } = req.body; // Ambil alasan reject dari body
-  const { name: rejecterName, role: rejecterRole } = req.session.user;
+  const { reason } = req.body;
 
   try {
+    // SECURITY CHECK: Pastikan user session valid
+    if (!req.session || !req.session.user) {
+      return res.status(401).json({ success: false, message: "Sesi tidak valid. Silakan login ulang." });
+    }
+
+    const { name: rejecterName, role: rejecterRole } = req.session.user;
+
     // Ambil data PR dulu untuk notifikasi
     const [rows] = await pool.query("SELECT pr_no FROM purchase_requests WHERE id = ?", [id]);
     const prNo = rows.length > 0 ? rows[0].pr_no : "-";
@@ -357,21 +363,30 @@ router.post("/:id/reject", async (req, res) => {
     );
 
     // --- NOTIFIKASI KE REQUESTER ---
-    const requester = await getRequesterData(id);
-    if (requester) {
-      const msg = `[SISTEM PURCHASING]
+    // Gunakan try-catch terpisah agar error notifikasi tidak membatalkan response sukses ke user
+    try {
+      const requester = await getRequesterData(id);
+      if (requester) {
+        const msg = `[SISTEM PURCHASING]
 Mohon Maaf, PR Anda telah DITOLAK.
 No PR: ${prNo}
 Ditolak Oleh: ${rejecterName} (${rejecterRole})
 Alasan: ${reason || "Tidak ada alasan spesifik."}
 Silakan perbaiki atau hubungi atasan terkait.`;
-      sendWhatsappNotification("requester", requester, msg);
+
+        // Fire and forget, but catch errors to prevent unhandled rejection
+        sendWhatsappNotification("requester", requester, msg).catch(err =>
+          console.error("Error sending reject notification:", err)
+        );
+      }
+    } catch (notifErr) {
+      console.error("Failed to prepare rejection notification:", notifErr);
     }
 
     res.json({ success: true, message: "PR berhasil ditolak." });
   } catch (error) {
     console.error(`Error rejecting PR #${id}:`, error);
-    res.status(500).json({ success: false, message: "Gagal menolak PR." });
+    res.status(500).json({ success: false, message: "Gagal menolak PR: " + (error.message || "Server Error") });
   }
 });
 
