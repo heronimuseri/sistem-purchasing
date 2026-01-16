@@ -275,4 +275,83 @@ router.delete("/tables/:name/:id", async (req, res) => {
     }
 });
 
+// ==============================================
+// POST /import - Import data from JSON (Web-based Migration)
+// ==============================================
+router.post("/import", async (req, res) => {
+    const importData = req.body;
+
+    if (!importData || Object.keys(importData).length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Data import kosong atau tidak valid."
+        });
+    }
+
+    const connection = await pool.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        // Disable FK checks to allow inserting in any order
+        await connection.query("SET FOREIGN_KEY_CHECKS=0");
+
+        let stats = {
+            tables: 0,
+            rows: 0
+        };
+
+        for (const [tableName, rows] of Object.entries(importData)) {
+            // Skip system or unknown tables if strict validation needed
+            // But we trust the user for this admin feature 
+
+            if (!Array.isArray(rows) || rows.length === 0) continue;
+
+            stats.tables++;
+            console.log(`Importing table ${tableName} with ${rows.length} rows`);
+
+            // Get columns from first row
+            const columns = Object.keys(rows[0]);
+
+            // Build dynamic insert query
+            // INSERT IGNORE INTO table (col1, col2) VALUES (?, ?)
+            const placeholders = columns.map(() => "?").join(", ");
+            const sql = `INSERT IGNORE INTO \`${tableName}\` (\`${columns.join("`, `")}\`) VALUES (${placeholders})`;
+
+            for (const row of rows) {
+                // Ensure values depend on columns order
+                const values = columns.map(col => {
+                    const val = row[col];
+                    // Handle dates if they come as strings?
+                    // mysql2 driver usually handles '2023-01-01' fine.
+                    return val;
+                });
+
+                await connection.query(sql, values);
+                stats.rows++;
+            }
+        }
+
+        await connection.query("SET FOREIGN_KEY_CHECKS=1");
+        await connection.commit();
+
+        res.json({
+            success: true,
+            message: `Migrasi berhasil! ${stats.rows} baris data diimport ke ${stats.tables} tabel.`,
+            stats
+        });
+
+    } catch (error) {
+        await connection.rollback();
+        console.error("Import error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Gagal import database: " + error.message,
+            error: error.message
+        });
+    } finally {
+        connection.release();
+    }
+});
+
 module.exports = router;

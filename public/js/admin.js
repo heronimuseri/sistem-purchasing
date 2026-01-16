@@ -598,6 +598,81 @@ document.addEventListener("DOMContentLoaded", () => {
   // DATABASE MANAGEMENT
   // ======================================================================
 
+  // ======================================================================
+  // DATABASE MIGRATION & RESTORE
+  // ======================================================================
+  const dbBackupFile = document.getElementById("db-backup-file");
+  const btnRestoreDb = document.getElementById("btn-restore-db");
+  const restoreStatus = document.getElementById("restore-status");
+
+  if (dbBackupFile && btnRestoreDb) {
+    let backupData = null;
+
+    dbBackupFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            backupData = JSON.parse(event.target.result);
+            const tablesWithData = Object.keys(backupData).filter(t => backupData[t].length > 0);
+            restoreStatus.innerHTML = `<span style="color: blue;">File valid. Berisi data untuk tabel: ${tablesWithData.join(", ")}</span>`;
+            btnRestoreDb.disabled = false;
+          } catch (error) {
+            restoreStatus.innerHTML = `<span style="color: red;">File JSON tidak valid!</span>`;
+            btnRestoreDb.disabled = true;
+            backupData = null;
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        btnRestoreDb.disabled = true;
+        backupData = null;
+        restoreStatus.innerHTML = "";
+      }
+    });
+
+    btnRestoreDb.addEventListener("click", async () => {
+      if (!backupData) return;
+
+      if (!confirm("PERINGATAN: Tindakan ini akan menambahkan data ke database. Lanjutkan?")) {
+        return;
+      }
+
+      try {
+        btnRestoreDb.disabled = true;
+        btnRestoreDb.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+        restoreStatus.innerHTML = "Sedang melakukan migrasi data...";
+
+        const response = await fetch("/api/admin/database/import", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(backupData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          restoreStatus.innerHTML = `<span style="color: green;">${result.message}</span>`;
+          alert(result.message);
+          // Refresh data tables if visible
+          if (typeof fetchDatabaseStatus === 'function') fetchDatabaseStatus();
+        } else {
+          throw new Error(result.message);
+        }
+
+      } catch (error) {
+        restoreStatus.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+        alert("Gagal melakukan restore: " + error.message);
+      } finally {
+        btnRestoreDb.disabled = false;
+        btnRestoreDb.innerHTML = '<i class="fa-solid fa-upload"></i> Restore Database dari JSON';
+      }
+    });
+  }
+
   let currentViewTable = null;
   let currentPage = 1;
   let totalPages = 1;
