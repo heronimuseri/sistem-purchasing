@@ -52,7 +52,16 @@ app.use(
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), {
+  setHeaders: function (res, path) {
+    if (path.endsWith(".html") || path.endsWith(".css") || path.endsWith(".js")) {
+      res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+      res.set("Pragma", "no-cache");
+      res.set("Expires", "0");
+      res.set("Surrogate-Control", "no-store");
+    }
+  }
+}));
 
 app.use(
   session({
