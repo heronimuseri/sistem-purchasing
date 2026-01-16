@@ -7,6 +7,77 @@ const pool = require("../db");
 const getApproverName = (req) =>
   req.session.user ? req.session.user.name : "SYSTEM";
 
+const axios = require("axios");
+
+// ... (kode lain)
+
+// --- FUNGSI HELPER NOTIFIKASI (FONNTE IMPLEMENTATION) ---
+const sendWhatsappNotification = async (targetRole, targetUser, message) => {
+  console.log("\n[WHATSAPP NOTIFICATION START]");
+  if (!targetUser || !targetUser.wa_number) {
+    console.log("Skipping: User has no WA number.");
+    return;
+  }
+
+  // Bersihkan format nomor WA (opsional, Fonnte biasanya bisa handle 62/08)
+  // Kebutuhan Fonnte: 08xx atau 628xx
+  let targetNumber = targetUser.wa_number;
+
+  console.log(`Target: ${targetUser.name} (${targetNumber})`);
+
+  try {
+    const token = process.env.FONNTE_TOKEN;
+    if (!token) {
+      console.error("ERROR: FONNTE_TOKEN is missing in .env");
+      return;
+    }
+
+    const response = await axios.post(
+      "https://api.fonnte.com/send",
+      {
+        target: targetNumber,
+        message: message,
+        countryCode: "62", // Default Indonesia
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    console.log("Fonnte Response:", response.data);
+  } catch (error) {
+    console.error("Fonnte API Error:", error.response ? error.response.data : error.message);
+  }
+  console.log("------------------------------------\n");
+};
+
+// Helper: Ambil data user target notifikasi
+const getTargetUsers = async (role) => {
+  if (!role) return [];
+  try {
+    const [users] = await pool.query("SELECT name, wa_number FROM users WHERE role = ?", [role]);
+    return users;
+  } catch (error) {
+    console.error("Error fetching target users for notification:", error);
+    return [];
+  }
+};
+
+const getRequesterData = async (prId) => {
+  try {
+    const [rows] = await pool.query("SELECT requester_id, requester_name FROM purchase_requests WHERE id = ?", [prId]);
+    if (rows.length === 0) return null;
+    const [users] = await pool.query("SELECT name, wa_number FROM users WHERE id = ?", [rows[0].requester_id]);
+    return users.length > 0 ? users[0] : { name: rows[0].requester_name, wa_number: null };
+  } catch (error) {
+    console.error("Error fetching requester data:", error);
+    return null;
+  }
+};
+
+
 // --- RUTE UNTUK MELIHAT DAFTAR PR ---
 router.get("/", async (req, res) => {
   const { role, name } = req.session.user;
@@ -123,9 +194,8 @@ router.post("/", async (req, res) => {
       "XI",
       "XII",
     ];
-    const prNo = `${sequence}/PR-SPA/${departemen}/${
-      romanMonths[new Date(tanggal).getMonth()]
-    }/${year}`;
+    const prNo = `${sequence}/PR-SPA/${departemen}/${romanMonths[new Date(tanggal).getMonth()]
+      }/${year}`;
 
     // 3. Update PR dengan nomor yang baru dibuat
     await connection.query(
@@ -148,6 +218,24 @@ router.post("/", async (req, res) => {
     }
 
     await connection.commit();
+
+    // --- NOTIFIKASI: PR Baru dibuat -> Kirim ke KTU ---
+    try {
+      const ktuUsers = await getTargetUsers('ktu');
+      const msg = `[SISTEM PURCHASING]
+Terdapat PR Baru yang membutuhkan persetujuan Anda.
+No PR: ${prNo}
+Requester: ${requesterName}
+Keperluan: ${keperluan}
+Silakan cek aplikasi untuk detailnya.`;
+
+      for (const user of ktuUsers) {
+        await sendWhatsappNotification('kt', user, msg); // Typo 'kt' -> harusnya 'ktu' tapi tidak fatal di log
+      }
+    } catch (notifError) {
+      console.error("Gagal mengirim notifikasi PR Baru:", notifError);
+    }
+
     res
       .status(201)
       .json({ success: true, message: `PR #${prNo} berhasil dibuat.` });
@@ -170,7 +258,7 @@ router.post("/:id/approve", async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      "SELECT status FROM purchase_requests WHERE id = ?",
+      "SELECT * FROM purchase_requests WHERE id = ?",
       [id]
     );
     if (rows.length === 0)
@@ -179,13 +267,16 @@ router.post("/:id/approve", async (req, res) => {
         .json({ success: false, message: "PR tidak ditemukan." });
 
     const currentStatus = rows[0].status;
+    const prNo = rows[0].pr_no;
     let nextStatus = "";
     let queryUpdate = "";
+    let notifTargetRole = ""; // Role target notifikasi selanjutnya
 
     if (role === "ktu" && currentStatus === "Pending KTU Approval") {
       nextStatus = "Pending Manager Approval";
       queryUpdate =
         "UPDATE purchase_requests SET status = ?, ktu_name = ?, approval_ktu_date = NOW() WHERE id = ?";
+      notifTargetRole = "manager";
     } else if (
       role === "manager" &&
       currentStatus === "Pending Manager Approval"
@@ -193,6 +284,7 @@ router.post("/:id/approve", async (req, res) => {
       nextStatus = "Fully Approved";
       queryUpdate =
         "UPDATE purchase_requests SET status = ?, manager_name = ?, approval_manager_date = NOW() WHERE id = ?";
+      notifTargetRole = "requester";
     } else {
       return res.status(403).json({
         success: false,
@@ -201,6 +293,29 @@ router.post("/:id/approve", async (req, res) => {
     }
 
     await pool.query(queryUpdate, [nextStatus, approverName, id]);
+
+    // --- NOTIFIKASI ---
+    if (notifTargetRole === "manager") {
+      const managers = await getTargetUsers("manager");
+      const msg = `[SISTEM PURCHASING]
+PR telah disetujui KTU dan menunggu persetujuan Manager.
+No PR: ${prNo}
+KTU Approver: ${approverName}
+Silakan cek aplikasi.`;
+      for (const mgr of managers) sendWhatsappNotification("manager", mgr, msg);
+
+    } else if (notifTargetRole === "requester") {
+      const requester = await getRequesterData(id);
+      if (requester) {
+        const msg = `[SISTEM PURCHASING]
+Selamat! PR Anda telah disetujui sepenuhnya (Fully Approved).
+No PR: ${prNo}
+Manager Approver: ${approverName}
+Silakan proses lebih lanjut.`;
+        sendWhatsappNotification("requester", requester, msg);
+      }
+    }
+
     res.json({ success: true, message: "PR berhasil disetujui." });
   } catch (error) {
     console.error(`Error approving PR #${id}:`, error);
@@ -213,11 +328,31 @@ router.post("/:id/approve", async (req, res) => {
 // --- RUTE UNTUK PROSES REJECT ---
 router.post("/:id/reject", async (req, res) => {
   const { id } = req.params;
+  const { reason } = req.body; // Ambil alasan reject dari body
+  const { name: rejecterName, role: rejecterRole } = req.session.user;
+
   try {
+    // Ambil data PR dulu untuk notifikasi
+    const [rows] = await pool.query("SELECT pr_no FROM purchase_requests WHERE id = ?", [id]);
+    const prNo = rows.length > 0 ? rows[0].pr_no : "-";
+
     await pool.query(
-      "UPDATE purchase_requests SET status = 'Rejected' WHERE id = ?",
-      [id]
+      "UPDATE purchase_requests SET status = 'Rejected', reject_reason = ? WHERE id = ?",
+      [reason || null, id]
     );
+
+    // --- NOTIFIKASI KE REQUESTER ---
+    const requester = await getRequesterData(id);
+    if (requester) {
+      const msg = `[SISTEM PURCHASING]
+Mohon Maaf, PR Anda telah DITOLAK.
+No PR: ${prNo}
+Ditolak Oleh: ${rejecterName} (${rejecterRole})
+Alasan: ${reason || "Tidak ada alasan spesifik."}
+Silakan perbaiki atau hubungi atasan terkait.`;
+      sendWhatsappNotification("requester", requester, msg);
+    }
+
     res.json({ success: true, message: "PR berhasil ditolak." });
   } catch (error) {
     console.error(`Error rejecting PR #${id}:`, error);

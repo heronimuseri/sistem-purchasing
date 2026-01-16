@@ -290,12 +290,32 @@ function handleTableButtonClick(event) {
  * Mengirim permintaan approve/reject ke server.
  */
 async function updateRequestStatus(id, action, confirmText) {
-  if (!confirm(`Anda yakin ingin ${confirmText} permintaan ini?`)) return;
+  let reason = null;
+
+  if (action === "reject") {
+    // Gunakan prompt browser standar untuk kesederhanaan (bisa diganti SweetAlert)
+    reason = prompt("Masukkan alasan penolakan (Wajib):");
+    if (reason === null) return; // Batal jika tekan Cancel
+    if (!reason.trim()) {
+      alert("Alasan penolakan tidak boleh kosong!");
+      return;
+    }
+  } else {
+    if (!confirm(`Anda yakin ingin ${confirmText} permintaan ini?`)) return;
+  }
 
   try {
     console.log(`Sending ${action} request for ID: ${id}`);
+
+    const payload = {};
+    if (reason) payload.reason = reason;
+
     const response = await fetch(`/api/requests/${id}/${action}`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
       credentials: "include",
     });
 
