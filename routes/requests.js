@@ -14,6 +14,21 @@ const axios = require("axios");
 // --- FUNGSI HELPER NOTIFIKASI (FONNTE IMPLEMENTATION) ---
 const sendWhatsappNotification = async (targetRole, targetUser, message) => {
   console.log("\n[WHATSAPP NOTIFICATION START]");
+
+  // CHECK: Apakah notifikasi diaktifkan di pengaturan?
+  try {
+    const [rows] = await pool.query(
+      "SELECT setting_value FROM system_settings WHERE setting_key = 'wa_notifications_enabled'"
+    );
+    if (rows.length > 0 && rows[0].setting_value === 'false') {
+      console.log("Skipping: Notifications are disabled in system settings.");
+      return;
+    }
+  } catch (err) {
+    console.error("Error checking notification settings:", err);
+    // Lanjut saja jika error check setting (fail open atau fail close? fail open for now)
+  }
+
   if (!targetUser || !targetUser.wa_number) {
     console.log("Skipping: User has no WA number.");
     return;

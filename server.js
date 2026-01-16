@@ -14,7 +14,10 @@ const requestRoutes = require("./routes/requests");
 const userRoutes = require("./routes/users");
 const masterRoutes = require("./routes/master");
 const databaseRoutes = require("./routes/database");
+const masterRoutes = require("./routes/master");
+const databaseRoutes = require("./routes/database");
 const vendorRoutes = require("./routes/vendors");
+const settingsRoutes = require("./routes/settings");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -98,6 +101,7 @@ app.use("/api/master", isAuthenticated, masterRoutes);
 app.use("/api/admin/users", isAuthenticated, isAdmin, userRoutes);
 app.use("/api/admin/database", isAuthenticated, isAdmin, databaseRoutes);
 app.use("/api/admin/vendors", isAuthenticated, isAdmin, vendorRoutes);
+app.use("/api/settings", isAuthenticated, settingsRoutes);
 
 // ==========================================================
 // ## LAPORAN & NOTIFICATION ENDPOINTS ##

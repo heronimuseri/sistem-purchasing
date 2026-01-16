@@ -504,6 +504,78 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ======================================================================
+  // PENGATURAN NOTIFIKASI (WA)
+  // ======================================================================
+  const toggleWaNotifications = document.getElementById("toggle-wa-notifications");
+  const waNotificationStatusText = document.getElementById("wa-notification-status-text");
+
+  async function loadNotificationSettings() {
+    if (!toggleWaNotifications) return;
+
+    try {
+      const response = await fetch("/api/settings");
+      if (response.ok) {
+        const settings = await response.json();
+        const isEnabled = settings.wa_notifications_enabled !== 'false'; // Default true
+        toggleWaNotifications.checked = isEnabled;
+        updateNotificationStatusText(isEnabled);
+      }
+    } catch (error) {
+      console.error("Error loading notification settings:", error);
+    }
+  }
+
+  function updateNotificationStatusText(isEnabled) {
+    if (waNotificationStatusText) {
+      waNotificationStatusText.textContent = isEnabled ? "Notifikasi Aktif" : "Notifikasi Nonaktif";
+      waNotificationStatusText.style.color = isEnabled ? "green" : "red";
+      waNotificationStatusText.style.fontWeight = isEnabled ? "bold" : "normal";
+    }
+  }
+
+  if (toggleWaNotifications) {
+    // Load initial state
+    loadNotificationSettings();
+
+    // Handle toggle change
+    toggleWaNotifications.addEventListener("change", async (e) => {
+      const isEnabled = e.target.checked;
+      updateNotificationStatusText(isEnabled);
+
+      try {
+        const response = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            key: "wa_notifications_enabled",
+            value: isEnabled ? "true" : "false"
+          })
+        });
+
+        if (response.ok) {
+          showNotification(
+            "settings-notification", // Reuse existing notification element in settings
+            `Notifikasi WhatsApp berhasil ${isEnabled ? "diaktifkan" : "dinonaktifkan"}.`,
+            "success"
+          );
+        } else {
+          throw new Error("Gagal menyimpan pengaturan.");
+        }
+      } catch (error) {
+        console.error("Error saving setting:", error);
+        showNotification(
+          "settings-notification",
+          "Gagal menyimpan pengaturan notifikasi.",
+          "error"
+        );
+        // Revert toggle if failed
+        e.target.checked = !isEnabled;
+        updateNotificationStatusText(!isEnabled);
+      }
+    });
+  }
+
+  // ======================================================================
   // PENGATURAN RESET PR - TIDAK BERUBAH
   // ======================================================================
   const formResetPr = document.getElementById("form-reset-pr");
