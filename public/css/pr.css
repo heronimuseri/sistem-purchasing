@@ -48,11 +48,9 @@ body {
 .card-header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(
-    135deg,
-    var(--primary-color),
-    var(--primary-dark)
-  );
+  background: linear-gradient(135deg,
+      var(--primary-color),
+      var(--primary-dark));
   color: white;
 }
 
@@ -317,68 +315,102 @@ select:focus {
 /* Responsive design */
 @media (max-width: 768px) {
   .wrap {
-    padding: 0;
+    padding: 12px;
   }
 
   .card {
-    border-radius: 0;
-    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   .grid-3 {
     grid-template-columns: 1fr;
   }
 
-  .items-header.grid-layout,
+  /* Hide the table header on mobile as we switch to card view */
+  .items-header.grid-layout {
+    display: none;
+  }
+
+  /* Card view for each item row */
   .item-row {
-    grid-template-columns: 40px 1fr;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "header header"
+      "mat mat"
+      "qty sat"
+      "act act";
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    align-items: start;
   }
 
-  .row-number-header,
+  /* Row Number styling */
   .row-number {
-    grid-column: 1;
+    grid-area: header;
+    justify-self: start;
+    background-color: #f1f5f9;
+    color: #475569;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
   }
 
-  .items-header.grid-layout div:nth-child(2),
+  .row-number::before {
+    content: "Item #";
+  }
+
+  /* Mobile Input Styling */
   .item-row input[name="material"] {
-    grid-column: 2;
+    grid-area: mat;
+    width: 100%;
   }
 
-  .items-header.grid-layout div:nth-child(3),
   .item-row input[name="qty"] {
-    grid-column: 1;
-    grid-row: 2;
+    grid-area: qty;
+    width: 100%;
   }
 
-  .items-header.grid-layout div:nth-child(4),
   .item-row select[name="satuan"] {
-    grid-column: 2;
-    grid-row: 2;
+    grid-area: sat;
+    width: 100%;
   }
 
-  .items-header.grid-layout div:nth-child(5),
   .item-row .btn-remove {
-    grid-column: 1 / span 2;
-    grid-row: 3;
-    justify-self: stretch;
-    margin-top: 10px;
+    grid-area: act;
+    width: 100%;
+    margin-top: 8px;
+    height: 40px;
   }
 
   .table-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .table-header button {
+    width: 100%;
   }
 
   .card-footer {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
   }
 
   .card-footer .btn {
     width: 100%;
     justify-content: center;
+    padding: 12px;
   }
 }
 

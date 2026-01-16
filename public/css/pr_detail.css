@@ -192,3 +192,57 @@ tbody tr:last-child td {
   padding: 40px;
   font-size: 16px;
 }
+
+/* Responsive design for Detail Page */
+@media (max-width: 768px) {
+  .container {
+    margin: 10px auto;
+    padding: 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  /* Make the header title wrap if needed */
+  .header h1 {
+    font-size: 20px;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  /* Make table scrollable horizonally on mobile */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  table {
+    min-width: 600px;
+    /* Ensure table keeps its shape and triggers scroll */
+  }
+
+  th,
+  td {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
