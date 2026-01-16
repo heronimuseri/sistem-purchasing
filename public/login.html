@@ -1,278 +1,275 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Purchasing Login</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0ea5e9" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="SPA PR" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
-      :root {
-        --bg-color: #f9f9f7;
-        --panel-color: #ffffff;
-        --text-color: #333333;
-        --muted-color: #6c757d;
-        --primary-color: #6a7b31;
-        --primary-dark: #4e5c25;
-        --accent-color: #f2bf4e;
-        --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        --border-radius: 12px;
-        --border-color: #e9ecef;
-      }
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Purchasing Login</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SPA PR" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+    :root {
+      --bg-color: #f9f9f7;
+      --panel-color: #ffffff;
+      --text-color: #333333;
+      --muted-color: #6c757d;
+      --primary-color: #6a7b31;
+      --primary-dark: #4e5c25;
+      --accent-color: #f2bf4e;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      --border-radius: 12px;
+      --border-color: #e9ecef;
+    }
 
-      body {
-        font-family: "Poppins", sans-serif;
-        color: var(--text-color);
-        background-color: var(--bg-color);
-        line-height: 1.6;
-      }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      .wrap {
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
-        background: linear-gradient(
-          135deg,
+    body {
+      font-family: "Poppins", sans-serif;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      line-height: 1.6;
+    }
+
+    .wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(135deg,
           rgba(106, 123, 49, 0.05) 0%,
-          rgba(249, 249, 247, 1) 100%
-        );
+          rgba(249, 249, 247, 1) 100%);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--panel-color);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 24px;
+      background: linear-gradient(135deg,
+          var(--primary-color),
+          var(--primary-dark));
+      color: white;
+    }
+
+    .brand img {
+      height: 50px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .brand small {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+
+    .card-content {
+      padding: 32px 24px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: var(--text-color);
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      outline: none;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      font-family: "Poppins", sans-serif;
+      background-color: white;
+    }
+
+    input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(106, 123, 49, 0.2);
+    }
+
+    .actions {
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 8px;
+      padding: 14px 16px;
+      font-weight: 600;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-family: "Poppins", sans-serif;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 10px rgba(106, 123, 49, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(106, 123, 49, 0.3);
+    }
+
+    /* Animasi tambahan untuk meningkatkan UX */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .field {
+      animation: fadeIn 0.5s ease-out 0.1s both;
+    }
+
+    .actions {
+      animation: fadeIn 0.5s ease-out 0.2s both;
+    }
+
+    footer {
+      animation: fadeIn 0.5s ease-out 0.3s both;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .wrap {
+        padding: 16px;
       }
 
       .card {
-        width: 100%;
-        max-width: 420px;
-        background: var(--panel-color);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        transition: all 0.3s ease;
+        padding: 0;
+        border: none;
+        box-shadow: none;
       }
 
       .card:hover {
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+        box-shadow: none;
+        transform: none;
       }
 
       .brand {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 24px;
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--primary-dark)
-        );
-        color: white;
-      }
-
-      .brand img {
-        height: 50px;
-        width: auto;
-        filter: brightness(0) invert(1);
-      }
-
-      .brand-text {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .brand h1 {
-        font-size: 20px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .brand small {
-        font-size: 14px;
-        opacity: 0.9;
-        margin-top: 2px;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
       }
 
       .card-content {
-        padding: 32px 24px;
+        padding: 24px 20px;
       }
+    }
 
-      .field {
-        margin-bottom: 20px;
-      }
+    footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 12px;
+      text-align: center;
+      font: 500 12px/1.4 "Poppins", sans-serif;
+      color: var(--muted-color);
+    }
+  </style>
+</head>
 
-      label {
-        display: block;
-        font-weight: 500;
-        font-size: 14px;
-        margin-bottom: 8px;
-        color: var(--text-color);
-      }
-
-      input[type="text"],
-      input[type="password"] {
-        width: 100%;
-        padding: 12px 16px;
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-        outline: none;
-        font-size: 14px;
-        transition: all 0.2s ease;
-        font-family: "Poppins", sans-serif;
-        background-color: white;
-      }
-
-      input:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(106, 123, 49, 0.2);
-      }
-
-      .actions {
-        margin-top: 28px;
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        gap: 8px;
-        padding: 14px 16px;
-        font-weight: 600;
-        border: 0;
-        border-radius: 8px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        font-family: "Poppins", sans-serif;
-        font-size: 15px;
-      }
-
-      .btn-primary {
-        color: #fff;
-        background-color: var(--primary-color);
-        box-shadow: 0 2px 10px rgba(106, 123, 49, 0.2);
-      }
-
-      .btn-primary:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(106, 123, 49, 0.3);
-      }
-
-      /* Animasi tambahan untuk meningkatkan UX */
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .card {
-        animation: fadeIn 0.5s ease-out;
-      }
-
-      .field {
-        animation: fadeIn 0.5s ease-out 0.1s both;
-      }
-
-      .actions {
-        animation: fadeIn 0.5s ease-out 0.2s both;
-      }
-
-      footer {
-        animation: fadeIn 0.5s ease-out 0.3s both;
-      }
-
-      /* Responsive design */
-      @media (max-width: 480px) {
-        .wrap {
-          padding: 16px;
-        }
-
-        .card {
-          padding: 0;
-          border: none;
-          box-shadow: none;
-        }
-
-        .card:hover {
-          box-shadow: none;
-          transform: none;
-        }
-
-        .brand {
-          border-radius: var(--border-radius) var(--border-radius) 0 0;
-        }
-
-        .card-content {
-          padding: 24px 20px;
-        }
-      }
-
-      footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 12px;
-        text-align: center;
-        font: 500 12px/1.4 "Poppins", sans-serif;
-        color: var(--muted-color);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <div class="card">
-        <div class="brand">
-          <img src="logo.png" alt="Logo Perusahaan" />
-          <div class="brand-text">
-            <h1>Purchasing System</h1>
-            <small>HO Plantation</small>
-          </div>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="brand">
+        <img src="logo.png" alt="Logo Perusahaan" />
+        <div class="brand-text">
+          <h1>Purchasing System</h1>
+          <small>HO Plantation</small>
         </div>
-        <form id="loginForm" class="card-content">
-          <div class="field">
-            <label for="company">
-              <i class="fas fa-building"></i> Company ID
-            </label>
-            <input id="company" type="text" value="SPA_70" required autocomplete="organization" />
-          </div>
-          <div class="field">
-            <label for="user"> <i class="fas fa-user"></i> User ID </label>
-            <input id="user" type="text" required autocomplete="username" />
-          </div>
-          <div class="field">
-            <label for="password"> <i class="fas fa-lock"></i> Password </label>
-            <input id="password" type="password" required autocomplete="current-password" />
-          </div>
-          <div class="actions">
-            <button class="btn btn-primary" type="submit">
-              <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-          </div>
-        </form>
       </div>
+      <form id="loginForm" class="card-content">
+        <div class="field">
+          <label for="company">
+            <i class="fas fa-building"></i> Company ID
+          </label>
+          <input id="company" type="text" value="SPA_70" required autocomplete="organization" />
+        </div>
+        <div class="field">
+          <label for="user"> <i class="fas fa-user"></i> User ID </label>
+          <input id="user" type="text" required autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="password"> <i class="fas fa-lock"></i> Password </label>
+          <input id="password" type="password" required autocomplete="current-password" />
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+        </div>
+      </form>
     </div>
-    <footer>© by heronimuseri</footer>
-    <script src="/js/pwa.js"></script>
-    <script src="/js/login.js" defer></script>
-  </body>
+  </div>
+  <footer>© by heronimuseri</footer>
+  <script src="/js/pwa.js?v=1.0.2"></script>
+  <script src="/js/login.js?v=1.0.2" defer></script>
+</body>
+
 </html>
