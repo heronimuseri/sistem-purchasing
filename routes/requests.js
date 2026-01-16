@@ -36,7 +36,7 @@ const sendWhatsappNotification = async (targetRole, targetUser, message) => {
       "https://api.fonnte.com/send",
       {
         target: targetNumber,
-        message: message,
+        message: `${message}\n\nLink: ${process.env.APP_URL || ''}/login.html`,
         countryCode: "62", // Default Indonesia
       },
       {
