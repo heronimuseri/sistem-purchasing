@@ -342,6 +342,10 @@ app.use((req, res) => {
 });
 
 // Menjalankan server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server berjalan di http://localhost:${PORT}`);
+
+  // Auto-run migrations on startup
+  const runMigrations = require('./utils/dbMigrate');
+  await runMigrations();
 });
