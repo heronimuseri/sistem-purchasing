@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function logout() {
   console.log("Logging out user");
   localStorage.clear();
-  window.location.href = "/Login.html";
+  window.location.href = "/login.html";
 }
 
 /**
