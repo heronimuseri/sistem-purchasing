@@ -61,6 +61,7 @@ async function handleFormSubmit(id) {
   };
 
   try {
+    // 1. Update Data Umum (PUT)
     const response = await fetch(`/api/admin/users/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -68,13 +69,32 @@ async function handleFormSubmit(id) {
       body: JSON.stringify(updatedUserData),
     });
     const result = await response.json();
-    alert(result.message);
 
-    if (result.success) {
-      window.location.href = "admin_user.html";
+    if (!result.success) {
+      throw new Error(result.message);
     }
+
+    // 2. Update Password jika diisi (PATCH)
+    if (updatedUserData.pass && updatedUserData.pass.trim() !== "") {
+      const passResponse = await fetch(`/api/admin/users/${id}/password`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ newPassword: updatedUserData.pass }),
+      });
+      const passResult = await passResponse.json();
+
+      if (!passResult.success) {
+        alert("Data user tersimpan, TAPI password gagal diubah: " + passResult.message);
+        return;
+      }
+    }
+
+    alert("User berhasil diperbarui!");
+    window.location.href = "admin_user.html";
+
   } catch (error) {
-    alert("Terjadi kesalahan saat menyimpan data.");
+    alert("Gagal menyimpan: " + error.message);
     console.error("Update error:", error);
   }
 }
