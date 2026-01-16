@@ -1,9 +1,8 @@
 // File: /sw.js
-
 // --- Konfigurasi Cache ---
-const CACHE_VERSION = "2.6-rejection-fix"; // LOGO UPDATE v2.6
-const STATIC_CACHE = `spa-pr-static-v${CACHE_VERSION}`;
-const DYNAMIC_CACHE = "spa-pr-dynamic-v2.5";
+const CACHE_VERSION = "{{VERSION}}";
+const STATIC_CACHE = `spa-pr-static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `spa-pr-dynamic-${CACHE_VERSION}`;
 
 // Asset yang akan di-cache saat install (Diperbarui agar sesuai dengan daftarpr.html)
 const STATIC_ASSETS = [

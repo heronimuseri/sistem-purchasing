@@ -20,9 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Logic for KTU & Manager ---
+  console.log("Dashboard Debug: Role =", userRole);
   if (["ktu", "manager"].includes(userRole)) {
     // Sembunyikan tombol Buat PR Baru
     const createPrLink = document.getElementById("create-pr-link");
+    console.log("Dashboard Debug: createPrLink found?", !!createPrLink);
     if (createPrLink) createPrLink.style.display = "none";
 
     // Tampilkan Section Summary

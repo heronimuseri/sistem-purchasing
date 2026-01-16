@@ -19,6 +19,7 @@ const settingsRoutes = require("./routes/settings");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const fs = require('fs'); // Import fs
 
 // ==========================================================
 // ## MIDDLEWARE CONFIGURATION ##
@@ -53,6 +54,30 @@ app.use(
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// --- DYNAMIC SERVICE WORKER ---
+// Serve sw.js with dynamic version to force update
+app.get('/sw.js', (req, res) => {
+  const swPath = path.join(__dirname, 'public', 'sw.js');
+  fs.readFile(swPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error("Error reading sw.js:", err);
+      return res.status(500).send("Error loading Service Worker");
+    }
+
+    // Inject server start time as version
+    // Use a global variable for version to keep it consistent across requests until restart
+    const version = global.SERVER_START_TIME || Date.now();
+    const swContent = data.replace('{{VERSION}}', version);
+
+    res.set("Content-Type", "application/javascript");
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+    res.send(swContent);
+  });
+});
+
 app.use(express.static(path.join(__dirname, "public"), {
   setHeaders: function (res, path) {
     if (path.endsWith(".html") || path.endsWith(".css") || path.endsWith(".js")) {
@@ -341,7 +366,8 @@ app.use((req, res) => {
 
 // Menjalankan server
 app.listen(PORT, async () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
+  global.SERVER_START_TIME = Date.now(); // Set server start time for SW versioning
+  console.log(`Server berjalan di http://localhost:${PORT} (Start Time: ${global.SERVER_START_TIME})`);
 
   // Auto-run migrations on startup
   const runMigrations = require('./utils/dbMigrate');

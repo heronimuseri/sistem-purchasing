@@ -67,12 +67,49 @@ class PWAHelper {
   setupUpdateListener() {
     let refreshing = false;
 
+    // 1. Handle updatefound (Update triggered by SW lifecycle)
+    if (this.serviceWorker) {
+      this.serviceWorker.addEventListener("updatefound", () => {
+        const newWorker = this.serviceWorker.installing;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            // New update installed
+            if (!refreshing) {
+              refreshing = true;
+              this.showToast("Mengupdate aplikasi...", "info");
+              setTimeout(() => window.location.reload(), 1000);
+            }
+          }
+        });
+      });
+    }
+
+    // 2. Handle controllerchange
     navigator.serviceWorker.addEventListener("controllerchange", () => {
       if (!refreshing) {
         refreshing = true;
         window.location.reload();
       }
     });
+
+    // 3. Periodic Check for Updates (Every 60s)
+    setInterval(() => {
+      if (this.serviceWorker) {
+        console.log("PWA: Checking for updates...");
+        this.serviceWorker.update();
+      }
+    }, 60 * 1000);
+
+    // 4. Check on visibility change (User returns to app)
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && this.serviceWorker) {
+        console.log("PWA: App visible, checking for updates...");
+        this.serviceWorker.update();
+      }
+    });
+
+    // 5. Check immediately
+    if (this.serviceWorker) this.serviceWorker.update();
   }
 
   // ==================== PUSH NOTIFICATIONS ====================
