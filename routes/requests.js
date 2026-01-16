@@ -10,6 +10,8 @@ const getApproverName = (req) =>
 const axios = require("axios");
 
 // ... (kode lain)
+const { sendPushToRole, sendPushToUser } = require('./notifications');
+
 
 // --- FUNGSI HELPER NOTIFIKASI (FONNTE IMPLEMENTATION) ---
 const sendWhatsappNotification = async (targetRole, targetUser, message) => {
@@ -253,8 +255,6 @@ router.post("/", async (req, res) => {
     }
 
     await connection.commit();
-
-    const { sendPushToRole, sendPushToUser } = require('./notifications');
 
     // ... (Existing notification logic) ...
 
