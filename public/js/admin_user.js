@@ -2,7 +2,7 @@
 
 function logout() {
     localStorage.clear();
-    window.location.href = '/Login.html';
+    window.location.href = "login.html";
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -98,7 +98,7 @@ async function handleFormSubmit(e) {
 function handleTableActions(e) {
     const target = e.target.closest('button');
     if (!target) return;
-    
+
     const action = target.dataset.action;
     const id = target.dataset.id;
 

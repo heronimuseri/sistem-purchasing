@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cek login
   if (!localStorage.getItem("userName")) {
     console.log("No user found, redirecting to login");
-    window.location.href = "/Login.html";
+    window.location.href = "/login.html";
     return;
   }
 

@@ -308,7 +308,7 @@ app.get("/force-reset-admin", async (req, res) => {
 
 // Rute default untuk menyajikan halaman login
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "Login.html"));
+  res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
 // Serve manifest.json dengan header yang tepat

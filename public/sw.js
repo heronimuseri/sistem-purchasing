@@ -8,7 +8,7 @@ const DYNAMIC_CACHE = "spa-pr-dynamic-v2.3";
 // Asset yang akan di-cache saat install (Diperbarui agar sesuai dengan daftarpr.html)
 const STATIC_ASSETS = [
   "/",
-  "/Login.html",
+  "/login.html",
   "/dashboard.html",
   "/daftarpr.html",
   "/pr.html",

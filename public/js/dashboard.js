@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!userName) {
     // Jika tidak ada data user, kembali ke halaman login
-    window.location.href = "/Login.html";
+    window.location.href = "/login.html";
     return;
   }
 
@@ -22,6 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Fungsi logout
   document.getElementById("logout-btn").addEventListener("click", () => {
     localStorage.clear();
-    window.location.href = "/Login.html";
+    window.location.href = "/login.html";
   });
 });
