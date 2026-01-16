@@ -161,6 +161,93 @@ app.get("/api/notifications/count", isAuthenticated, async (req, res) => {
   }
 });
 
+// Endpoint Sementara untuk Inisialisasi Database (HANYA SEKALI PAKAI)
+app.get("/init-db", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+
+    const sql = `
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        company VARCHAR(100) DEFAULT NULL,
+        \`user\` VARCHAR(50) NOT NULL UNIQUE,
+        pass VARCHAR(255) NOT NULL,
+        role ENUM('admin', 'kerani', 'ktu', 'manager') NOT NULL DEFAULT 'kerani',
+        name VARCHAR(100) NOT NULL,
+        wa_number VARCHAR(20) UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS purchase_requests (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        pr_no VARCHAR(50) UNIQUE,
+        tanggal DATE NOT NULL,
+        keperluan TEXT NOT NULL,
+        departemen VARCHAR(50) NOT NULL,
+        status ENUM('Pending KTU Approval', 'Pending Manager Approval', 'Fully Approved', 'Rejected') DEFAULT 'Pending KTU Approval',
+        requester_id INT,
+        requester_name VARCHAR(100) NOT NULL,
+        ktu_name VARCHAR(100) DEFAULT NULL,
+        approval_ktu_date DATETIME DEFAULT NULL,
+        manager_name VARCHAR(100) DEFAULT NULL,
+        approval_manager_date DATETIME DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS pr_items (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        pr_id INT NOT NULL,
+        material VARCHAR(255) NOT NULL,
+        qty DECIMAL(10, 2) NOT NULL,
+        satuan VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS pr_counters (
+        year INT PRIMARY KEY,
+        last_seq INT NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS vendors (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        kode VARCHAR(10) NOT NULL UNIQUE,
+        nama VARCHAR(255) NOT NULL,
+        pic VARCHAR(255),
+        no_hp VARCHAR(50),
+        alamat TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+    `;
+
+    // Split SQL by ; to execute one by one (pool.query basic doesn't support multipleStatements by default usually unless configured)
+    // But we enabled multipleStatements in db.js? Wait, db.js uses process.env.MYSQL_URL logic?
+    // Actually, createPool typically doesn't support multipleStatements unless explicitly set.
+    // To be safe, we split.
+    const statements = sql.split(';').filter(s => s.trim().length > 0);
+    for (const stmt of statements) {
+      await connection.query(stmt);
+    }
+
+    // Insert admin user
+    const insertAdmin = `
+    INSERT INTO users (company, \`user\`, pass, role, name, wa_number) VALUES 
+    ('PT SPA', 'admin', '$2b$10$rKN3r9O5QZv0d7Xz8V2pZuQxj3KzW5r6yVvGpM1wH8nL4jC0eF2Ki', 'admin', 'Administrator', '081234567890')
+    ON DUPLICATE KEY UPDATE name = name`;
+
+    await connection.query(insertAdmin);
+
+    connection.release();
+    res.send("<h1>Database Initialized!</h1><p>Tables created and admin user added.</p><a href='/'>Go to Login</a>");
+
+  } catch (error) {
+    console.error("Init DB Error:", error);
+    res.status(500).send("Error initializing DB: " + error.message);
+  }
+});
+
 // Rute default untuk menyajikan halaman login
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "Login.html"));
