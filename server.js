@@ -371,6 +371,139 @@ app.get("/migrate-po", async (req, res) => {
   }
 });
 
+// INIT-PO: Direct SQL execution for PO tables (no file dependency)
+app.get("/init-po", async (req, res) => {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const results = [];
+
+    // 1. Update users ENUM
+    try {
+      await connection.query(`ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'kerani', 'ktu', 'manager', 'purchasing', 'manager_ho', 'direktur') NOT NULL DEFAULT 'kerani'`);
+      results.push("✅ Users role ENUM updated");
+    } catch (e) { results.push("⚠️ Users ENUM: " + e.message); }
+
+    // 2. po_counters
+    try {
+      await connection.query(`CREATE TABLE IF NOT EXISTS po_counters (year INT PRIMARY KEY, last_seq INT DEFAULT 0)`);
+      results.push("✅ po_counters created");
+    } catch (e) { results.push("⚠️ po_counters: " + e.message); }
+
+    // 3. purchase_orders
+    try {
+      await connection.query(`
+        CREATE TABLE IF NOT EXISTS purchase_orders (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          po_no VARCHAR(50) NOT NULL UNIQUE,
+          pr_id INT NOT NULL,
+          tanggal DATE NOT NULL,
+          vendor_id INT NOT NULL,
+          keperluan TEXT,
+          departemen VARCHAR(100),
+          status ENUM('Pending Manager HO Approval', 'Pending Direktur Approval', 'Fully Approved', 'Dikirim', 'Diterima', 'Rejected') DEFAULT 'Pending Manager HO Approval',
+          include_ppn BOOLEAN DEFAULT FALSE,
+          purchaser_id INT NOT NULL,
+          purchaser_name VARCHAR(100),
+          manager_ho_name VARCHAR(100) DEFAULT NULL,
+          approval_manager_ho_date DATETIME DEFAULT NULL,
+          direktur_name VARCHAR(100) DEFAULT NULL,
+          approval_direktur_date DATETIME DEFAULT NULL,
+          rejection_reason TEXT DEFAULT NULL,
+          tanggal_kirim DATE DEFAULT NULL,
+          tanggal_terima DATE DEFAULT NULL,
+          penerima_name VARCHAR(100) DEFAULT NULL,
+          total_amount DECIMAL(15, 2) DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+      `);
+      results.push("✅ purchase_orders created");
+    } catch (e) { results.push("⚠️ purchase_orders: " + e.message); }
+
+    // 4. po_items
+    try {
+      await connection.query(`
+        CREATE TABLE IF NOT EXISTS po_items (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          po_id INT NOT NULL,
+          material VARCHAR(255) NOT NULL,
+          qty DECIMAL(10, 2) NOT NULL,
+          satuan VARCHAR(50) NOT NULL,
+          harga_satuan DECIMAL(15, 2) DEFAULT 0,
+          total_harga DECIMAL(15, 2) DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      results.push("✅ po_items created");
+    } catch (e) { results.push("⚠️ po_items: " + e.message); }
+
+    // 5. invoices
+    try {
+      await connection.query(`
+        CREATE TABLE IF NOT EXISTS invoices (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          invoice_no VARCHAR(50) NOT NULL UNIQUE,
+          periode VARCHAR(50) NOT NULL,
+          vendor_id INT NOT NULL,
+          nama_rekening VARCHAR(100),
+          no_rekening VARCHAR(50),
+          nama_bank VARCHAR(100),
+          keterangan_pembayaran TEXT,
+          tanggal DATE NOT NULL,
+          jatuh_tempo DATE NOT NULL,
+          status ENUM('Pending Manager HO', 'Pending Direktur', 'Approved', 'Rejected') DEFAULT 'Pending Manager HO',
+          subtotal DECIMAL(15, 2) DEFAULT 0,
+          ppn DECIMAL(15, 2) DEFAULT 0,
+          total DECIMAL(15, 2) DEFAULT 0,
+          purchaser_id INT NOT NULL,
+          purchaser_name VARCHAR(100),
+          manager_ho_name VARCHAR(100) DEFAULT NULL,
+          approval_manager_ho_date DATETIME DEFAULT NULL,
+          direktur_name VARCHAR(100) DEFAULT NULL,
+          approval_direktur_date DATETIME DEFAULT NULL,
+          rejection_reason TEXT DEFAULT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      results.push("✅ invoices created");
+    } catch (e) { results.push("⚠️ invoices: " + e.message); }
+
+    // 6. invoice_po
+    try {
+      await connection.query(`
+        CREATE TABLE IF NOT EXISTS invoice_po (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          invoice_id INT NOT NULL,
+          po_id INT NOT NULL
+        )
+      `);
+      results.push("✅ invoice_po created");
+    } catch (e) { results.push("⚠️ invoice_po: " + e.message); }
+
+    // 7. invoice_counters
+    try {
+      await connection.query(`CREATE TABLE IF NOT EXISTS invoice_counters (year INT PRIMARY KEY, last_seq INT DEFAULT 0)`);
+      results.push("✅ invoice_counters created");
+    } catch (e) { results.push("⚠️ invoice_counters: " + e.message); }
+
+    connection.release();
+
+    res.send(`
+      <h1>🎉 Inisialisasi PO Selesai!</h1>
+      <h2>Hasil:</h2>
+      <ul>${results.map(r => '<li>' + r + '</li>').join('')}</ul>
+      <br>
+      <a href='/dashboard.html'>Kembali ke Dashboard</a> | 
+      <a href='/daftarpo.html'>Coba Halaman PO</a>
+    `);
+  } catch (error) {
+    if (connection) connection.release();
+    console.error("Init PO Error:", error);
+    res.status(500).send("<h1>❌ Init PO Gagal</h1><p>" + error.message + "</p>");
+  }
+});
+
 // FAIL-SAFE: Redirect Login.html (Kapital) ke login.html (Huruf kecil)
 // Ini menangani cache browser lama yang masih request ke file kapital
 app.get("/Login.html", (req, res) => {
