@@ -19,15 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("admin-menu-section").classList.remove("hidden");
   }
 
-  // --- Logic for KTU & Manager ---
-  console.log("Dashboard Debug: Role =", userRole);
+  // --- Logic for KTU & Manager (Hide Create PR) ---
   if (["ktu", "manager"].includes(userRole)) {
     // Sembunyikan tombol Buat PR Baru
     const createPrLink = document.getElementById("create-pr-link");
-    console.log("Dashboard Debug: createPrLink found?", !!createPrLink);
     if (createPrLink) createPrLink.style.display = "none";
+  }
 
-    // Tampilkan Section Summary
+  // --- Show Summary for All Roles (except maybe generic users if any) ---
+  // Allow KTU, Manager, Kerani, Admin to see summary
+  if (["ktu", "manager", "kerani", "admin"].includes(userRole)) {
     const summarySection = document.getElementById("ktu-manager-summary");
     if (summarySection) {
       summarySection.classList.remove("hidden");
