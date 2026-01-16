@@ -248,6 +248,37 @@ app.get("/init-db", async (req, res) => {
   }
 });
 
+// Endpoint Debug Auth (Cek kenapa login gagal)
+app.get("/debug-auth", async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query("SELECT * FROM users WHERE user = 'admin'");
+    connection.release();
+
+    if (rows.length === 0) {
+      return res.send("<h1>User 'admin' TIDAK DITEMUKAN di database!</h1><p>Silakan jalankan /init-db lagi.</p>");
+    }
+
+    const user = rows[0];
+    const bcrypt = require("bcrypt");
+    const isMatch = await bcrypt.compare("admin123", user.pass);
+
+    res.send(`
+      <h1>Debug Auth Info</h1>
+      <ul>
+        <li><b>Company ID:</b> ${user.company}</li>
+        <li><b>User:</b> ${user.user}</li>
+        <li><b>Stored Hash:</b> ${user.pass}</li>
+        <li><b>Test 'admin123':</b> ${isMatch ? "✅ COCOK/MATCH" : "❌ GAGAL/MISMATCH"}</li>
+      </ul>
+      <p>Jika 'MATCH', berarti password benar. Pastikan Anda mengetik Company ID persis: <b>${user.company}</b></p>
+    `);
+
+  } catch (error) {
+    res.status(500).send("Error: " + error.message);
+  }
+});
+
 // Rute default untuk menyajikan halaman login
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "Login.html"));
