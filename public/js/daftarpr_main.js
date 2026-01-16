@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cek login
   if (!localStorage.getItem("userName")) {
     console.log("No user found, redirecting to login");
-    window.location.href = "/Login.html";
+    window.location.href = "/login.html";
     return;
   }
 
@@ -255,13 +255,11 @@ function generateActionButtons(req, userRole) {
   }
 
   return `
-    <a href="/pr_detail.html?id=${
-      req.id
+    <a href="/pr_detail.html?id=${req.id
     }" class="btn btn-sm btn-review" title="Lihat Detail">
       <i class="fa-solid fa-eye"></i> Detail
     </a>
-    <button class="btn btn-sm btn-print" data-action="print" data-id="${
-      req.id
+    <button class="btn btn-sm btn-print" data-action="print" data-id="${req.id
     }" 
       ${isApproved ? "" : "disabled"} title="Cetak PR">
       <i class="fa-solid fa-print"></i> Cetak
