@@ -36,6 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // --- Show PO Section for relevant roles ---
+  // PO Section visible for: purchasing, manager_ho, direktur, kerani (for delivery receipt), admin
+  // Also show for ktu and manager for visibility/monitoring
+  const poRoles = ["purchasing", "manager_ho", "direktur", "kerani", "ktu", "manager", "admin"];
+  if (poRoles.includes(userRole)) {
+    const poSection = document.getElementById("po-section");
+    if (poSection) {
+      poSection.classList.remove("hidden");
+    }
+  }
+
   // Fungsi logout
   document.getElementById("logout-btn").addEventListener("click", () => {
     localStorage.clear();

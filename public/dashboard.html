@@ -45,15 +45,18 @@
       </div>
 
       <!-- PO (Purchase Order) Section -->
-      <h2 style="margin-top: 30px;">Purchase Order</h2>
-      <div class="menu-grid">
-        <a href="/daftarpo.html" class="menu-item">
-          <div class="menu-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-          <div class="menu-title">Purchase Order (PO)</div>
-          <div class="menu-desc">
-            Buat dan kelola Purchase Order ke Vendor.
-          </div>
-        </a>
+      <div id="po-section" class="hidden">
+        <h2 style="margin-top: 30px;">Purchase Order</h2>
+        <div class="menu-grid">
+          <a href="/daftarpo.html" class="menu-item">
+            <span id="po-badge" class="dashboard-badge" style="display: none;">0</span>
+            <div class="menu-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <div class="menu-title">Purchase Order (PO)</div>
+            <div class="menu-desc">
+              Buat dan kelola Purchase Order ke Vendor.
+            </div>
+          </a>
+        </div>
       </div>
 
       <!-- Summary Section for KTU/Manager -->
