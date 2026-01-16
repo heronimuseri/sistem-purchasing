@@ -1,10 +1,10 @@
-// public/js/pwa.js - Complete PWA Solution
+// public/js/pwa.js - Premium PWA Solution with Dynamic UI
+// VAPID Key: GANTI_DENGAN_VAPID_PUBLIC_KEY_BACKEND_ANDA
 
 class PWAHelper {
   constructor() {
     this.VAPID_PUBLIC_KEY = "GANTI_DENGAN_VAPID_PUBLIC_KEY_BACKEND_ANDA";
     this.serviceWorker = null;
-    this.isUpdateAvailable = false;
     this.deferredPrompt = null;
     this.isInitialized = false;
   }
@@ -12,12 +12,12 @@ class PWAHelper {
   async init() {
     if (this.isInitialized) return;
 
-    console.log("PWA Helper: Initializing...");
+    console.log("PWA Helper: Initializing v2.0 (Premium UI)...");
 
-    // 1. Register Service Worker (for all users)
+    // 1. Register Service Worker
     await this.registerServiceWorker();
 
-    // 2. Setup core PWA features (for all users)
+    // 2. Setup Core Features
     this.setupUpdateListener();
     this.setupOfflineDetection();
     this.setupInstallPrompt();
@@ -210,7 +210,7 @@ class PWAHelper {
                         Install aplikasi untuk pengalaman yang lebih baik
                     </p>
                     <div style="display: flex; gap: 10px;">
-                        <button onclick="pwaHelper.installApp()" style="
+                        <button id="pwa-install-btn" style="
                             background: #0ea5e9;
                             color: white;
                             border: none;
@@ -220,7 +220,7 @@ class PWAHelper {
                             flex: 1;
                             font-size: 14px;
                         ">Install</button>
-                        <button onclick="pwaHelper.dismissInstallPrompt()" style="
+                        <button id="pwa-dismiss-btn" style="
                             background: #6b7280;
                             color: white;
                             border: none;
@@ -234,34 +234,58 @@ class PWAHelper {
             `;
 
       document.body.insertAdjacentHTML("beforeend", installHtml);
+
+      // Attach event listeners (CSP-compliant - no inline handlers)
+      const installBtn = document.getElementById("pwa-install-btn");
+      const dismissBtn = document.getElementById("pwa-dismiss-btn");
+
+      if (installBtn) {
+        installBtn.addEventListener("click", () => this.installApp());
+      }
+      if (dismissBtn) {
+        dismissBtn.addEventListener("click", () => this.dismissInstallPrompt());
+      }
     }
   }
 
   shouldShowInstallPrompt() {
+    // Don't show if already installed (running as standalone app)
     if (window.matchMedia("(display-mode: standalone)").matches) {
       return false;
     }
 
-    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    // Check if running as iOS standalone
+    if (window.navigator.standalone === true) {
       return false;
     }
 
+    // Allow install prompt on all devices including mobile
     return true;
   }
 
   async installApp() {
-    if (this.deferredPrompt) {
-      this.deferredPrompt.prompt();
-      const { outcome } = await this.deferredPrompt.userChoice;
+    console.log("PWA: installApp called, deferredPrompt =", this.deferredPrompt);
 
-      if (outcome === "accepted") {
-        console.log("User accepted the install prompt");
-      } else {
-        console.log("User dismissed the install prompt");
+    if (this.deferredPrompt) {
+      try {
+        this.deferredPrompt.prompt();
+        const { outcome } = await this.deferredPrompt.userChoice;
+
+        if (outcome === "accepted") {
+          console.log("User accepted the install prompt");
+          this.showToast("Menginstal aplikasi...", "success");
+        } else {
+          console.log("User dismissed the install prompt");
+          this.showToast("Instalasi dibatalkan", "info");
+        }
+        this.deferredPrompt = null;
+        this.dismissInstallPrompt();
+      } catch (error) {
+        console.error("Install error:", error);
+        this.showInstallInstructions();
       }
-      this.deferredPrompt = null;
-      this.dismissInstallPrompt();
     } else {
+      console.log("PWA: No deferredPrompt available, showing instructions");
       this.showInstallInstructions();
     }
   }
@@ -269,18 +293,73 @@ class PWAHelper {
   showInstallInstructions() {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
+    const isSamsung = /SamsungBrowser/.test(navigator.userAgent);
 
     let instructions = "";
+    let duration = 6000;
 
     if (isIOS) {
-      instructions = 'Tap tombol share dan pilih "Add to Home Screen"';
+      instructions = 'Tap tombol Share (kotak dengan panah ke atas) lalu pilih "Add to Home Screen"';
+      this.showIOSInstallGuide();
+    } else if (isSamsung) {
+      instructions = 'Buka menu (⋮) dan pilih "Add page to" → "Home screen"';
+      this.showToast(`Untuk install: ${instructions}`, "info", duration);
     } else if (isAndroid) {
-      instructions = 'Buka menu browser dan pilih "Add to Home screen"';
+      instructions = 'Buka menu browser (⋮) dan pilih "Install app" atau "Add to Home screen"';
+      this.showToast(`Untuk install: ${instructions}`, "info", duration);
     } else {
-      instructions = "Klik tombol Install di address bar browser";
+      instructions = "Klik ikon Install di address bar browser atau gunakan menu browser";
+      this.showToast(`Untuk install: ${instructions}`, "info", duration);
     }
 
-    this.showToast(`Untuk install: ${instructions}`, "info", 5000);
+    this.dismissInstallPrompt();
+  }
+
+  showIOSInstallGuide() {
+    // Remove existing guide if any
+    const existingGuide = document.getElementById("ios-install-guide");
+    if (existingGuide) existingGuide.remove();
+
+    const guideHtml = `
+      <div id="ios-install-guide" style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        z-index: 10001;
+        text-align: center;
+        font-family: system-ui, -apple-system, sans-serif;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+      ">
+        <h4 style="margin: 0 0 10px 0; font-size: 16px;">📲 Install SPA Purchasing</h4>
+        <p style="margin: 0 0 15px 0; font-size: 14px; opacity: 0.9;">
+          Tap <strong style="font-size: 18px;">⎋</strong> (Share) lalu <strong>"Add to Home Screen"</strong>
+        </p>
+        <button id="ios-guide-close-btn" style="
+          background: rgba(255,255,255,0.2);
+          color: white;
+          border: 1px solid rgba(255,255,255,0.3);
+          padding: 8px 20px;
+          border-radius: 20px;
+          font-size: 14px;
+          cursor: pointer;
+        ">Mengerti</button>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML("beforeend", guideHtml);
+
+    // CSP-compliant event handler
+    const closeBtn = document.getElementById("ios-guide-close-btn");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        const guide = document.getElementById("ios-install-guide");
+        if (guide) guide.remove();
+      });
+    }
   }
 
   dismissInstallPrompt() {

@@ -1,22 +1,31 @@
 // File: /sw.js
 
 // --- Konfigurasi Cache ---
-const CACHE_VERSION = "1.3"; // Update versi ini jika ada perubahan pada STATIC_ASSETS
+const CACHE_VERSION = "2.3-xlsx-local"; // FORCE UPDATE - Added local XLSX library
 const STATIC_CACHE = `spa-pr-static-v${CACHE_VERSION}`;
-const DYNAMIC_CACHE = "spa-pr-dynamic-v1";
+const DYNAMIC_CACHE = "spa-pr-dynamic-v2.3";
 
 // Asset yang akan di-cache saat install (Diperbarui agar sesuai dengan daftarpr.html)
 const STATIC_ASSETS = [
   "/",
-  "/daftarpr.html", // Pastikan nama file sesuai (lowercase)
+  "/Login.html",
+  "/dashboard.html",
+  "/daftarpr.html",
+  "/pr.html",
+  "/laporanpr.html",
   "/manifest.json",
   "/images/logo-icon-192.png",
   "/images/logo-icon-512.png",
   "/css/daftarpr.css",
+  "/css/dashboard.css",
+  "/css/all.min.css",
   "/js/daftarpr_main.js",
+  "/js/dashboard.js",
+  "/js/login.js",
   "/js/print_pr.js",
   "/js/pwa.js",
-  // Menambahkan CDN Font Awesome agar tersedia offline
+  "/js/laporanpr.js",
+  "/js/xlsx.full.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
 ];
 

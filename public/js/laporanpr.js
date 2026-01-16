@@ -376,8 +376,14 @@ async function exportGlobalReport() {
   console.log("Starting Excel export process...");
 
   if (typeof XLSX === "undefined") {
-    alert("Library XLSX tidak dimuat. Pastikan koneksi internet stabil.");
-    return;
+    console.error("XLSX library not loaded. Attempting to load dynamically...");
+    // Try to load dynamically as fallback
+    try {
+      await loadXLSXLibrary();
+    } catch (e) {
+      alert("Library XLSX gagal dimuat. Coba refresh halaman (Ctrl+Shift+R).");
+      return;
+    }
   }
 
   if (!allReportData || allReportData.length === 0) {
@@ -528,6 +534,28 @@ function formatDateForExcel(dateString) {
   }
 }
 
+// Dynamic XLSX library loader (fallback)
+function loadXLSXLibrary() {
+  return new Promise((resolve, reject) => {
+    if (typeof XLSX !== "undefined") {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "/js/xlsx.full.min.js";
+    script.onload = () => {
+      console.log("XLSX library loaded dynamically");
+      resolve();
+    };
+    script.onerror = () => {
+      reject(new Error("Failed to load XLSX library"));
+    };
+    document.head.appendChild(script);
+  });
+}
+
 // Ekspos fungsi ke global scope
 window.exportGlobalReport = exportGlobalReport;
 window.loadLaporanData = loadLaporanData;
+

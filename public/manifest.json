@@ -2,7 +2,7 @@
   "name": "Sinar Permata Agro - Purchase Requisition",
   "short_name": "SPA Purchasing",
   "description": "Sistem Manajemen Permintaan Barang",
-  "start_url": "/DaftarPR.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f7f8fc",
   "theme_color": "#0ea5e9",
