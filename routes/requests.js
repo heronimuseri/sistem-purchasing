@@ -254,6 +254,19 @@ router.post("/", async (req, res) => {
 
     await connection.commit();
 
+    const { sendPushToRole, sendPushToUser } = require('./notifications');
+
+    // ... (Existing notification logic) ...
+
+    // --- PUSH NOTIFICATION: PR Baru ---
+    const pushPayload = {
+      title: "PR Baru Menunggu Approval",
+      body: `${requesterName}: ${keperluan}`,
+      url: `/pr_detail.html?id=${prId}`,
+      icon: "/images/logo-icon-192.png"
+    };
+    sendPushToRole('ktu', pushPayload);
+
     // --- NOTIFIKASI: PR Baru dibuat -> Kirim ke KTU ---
     try {
       const ktuUsers = await getTargetUsers('ktu');
@@ -331,6 +344,13 @@ router.post("/:id/approve", async (req, res) => {
 
     // --- NOTIFIKASI ---
     if (notifTargetRole === "manager") {
+      // Push to Manager
+      sendPushToRole('manager', {
+        title: "Approval PR Diperlukan",
+        body: `PR ${prNo} dari KTU`,
+        url: `/pr_detail.html?id=${id}`
+      });
+
       const managers = await getTargetUsers("manager");
       const msg = `[SISTEM PURCHASING]
 PR telah disetujui KTU dan menunggu persetujuan Manager.
@@ -340,6 +360,15 @@ Silakan cek aplikasi.`;
       for (const mgr of managers) sendWhatsappNotification("manager", mgr, msg);
 
     } else if (notifTargetRole === "requester") {
+      // Push to Requester
+      if (rows[0].requester_id) {
+        sendPushToUser(rows[0].requester_id, {
+          title: "PR Disetujui!",
+          body: `PR ${prNo} telah disetujui Manager`,
+          url: `/pr_detail.html?id=${id}`
+        });
+      }
+
       const requester = await getRequesterData(id);
       if (requester) {
         const msg = `[SISTEM PURCHASING]
@@ -383,8 +412,17 @@ router.post("/:id/reject", async (req, res) => {
     );
 
     // --- NOTIFIKASI KE REQUESTER ---
-    // Gunakan try-catch terpisah agar error notifikasi tidak membatalkan response sukses ke user
     try {
+      // Push notification
+      const [prData] = await pool.query("SELECT requester_id FROM purchase_requests WHERE id = ?", [id]);
+      if (prData.length > 0 && prData[0].requester_id) {
+        sendPushToUser(prData[0].requester_id, {
+          title: "PR Ditolak",
+          body: `PR ${prNo} ditolak: ${reason}`,
+          url: `/pr_detail.html?id=${id}`
+        });
+      }
+
       const requester = await getRequesterData(id);
       if (requester) {
         const msg = `[SISTEM PURCHASING]

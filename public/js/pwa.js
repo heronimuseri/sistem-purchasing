@@ -1,9 +1,9 @@
 // public/js/pwa.js - Premium PWA Solution with Dynamic UI
-// VAPID Key: GANTI_DENGAN_VAPID_PUBLIC_KEY_BACKEND_ANDA
+// VAPID Key: BKagwE25zgEXeHmcqcy01lkHxD_0VJ616gqXcqNjCGvUjqdrcqZOfX0Ue_LMDVheYchpf04V1qZwEW72bw4xhpg
 
 class PWAHelper {
   constructor() {
-    this.VAPID_PUBLIC_KEY = "GANTI_DENGAN_VAPID_PUBLIC_KEY_BACKEND_ANDA";
+    this.VAPID_PUBLIC_KEY = "BKagwE25zgEXeHmcqcy01lkHxD_0VJ616gqXcqNjCGvUjqdrcqZOfX0Ue_LMDVheYchpf04V1qZwEW72bw4xhpg";
     this.serviceWorker = null;
     this.deferredPrompt = null;
     this.isInitialized = false;
@@ -115,12 +115,9 @@ class PWAHelper {
   // ==================== PUSH NOTIFICATIONS ====================
 
   async initializePushNotifications() {
-    // Only initialize for approvers who are logged in
-    const userRole = localStorage.getItem("userRole");
-    if (
-      !localStorage.getItem("userName") ||
-      (userRole !== "ktu" && userRole !== "manager")
-    ) {
+    // Initialize for ALL users who are logged in
+    // This allows requester to get rejected notification, and approvers to get approval requests
+    if (!localStorage.getItem("userName")) {
       return;
     }
 

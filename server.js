@@ -16,6 +16,7 @@ const masterRoutes = require("./routes/master");
 const databaseRoutes = require("./routes/database");
 const vendorRoutes = require("./routes/vendors");
 const settingsRoutes = require("./routes/settings");
+const { router: notificationRoutes } = require("./routes/notifications"); // Import notification router
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -125,6 +126,7 @@ app.use("/api/admin/users", isAuthenticated, isAdmin, userRoutes);
 app.use("/api/admin/database", isAuthenticated, isAdmin, databaseRoutes);
 app.use("/api/admin/vendors", isAuthenticated, isAdmin, vendorRoutes);
 app.use("/api/settings", isAuthenticated, settingsRoutes);
+app.use("/api/notifications", isAuthenticated, notificationRoutes); // Register notification routes
 
 // ==========================================================
 // ## LAPORAN & NOTIFICATION ENDPOINTS ##
