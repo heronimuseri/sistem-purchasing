@@ -122,6 +122,38 @@ router.get("/kpi", async (req, res) => {
 });
 
 // ==============================================
+// GET /vendors - List Vendor for Dropdown (MUST BE BEFORE /:id)
+// ==============================================
+router.get("/vendors", async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT id, nama FROM vendors ORDER BY nama ASC");
+        res.json({ success: true, data: rows });
+    } catch (error) {
+        console.error("Error fetching vendors:", error);
+        res.status(500).json({ success: false, message: "Gagal mengambil data vendor." });
+    }
+});
+
+// ==============================================
+// GET /pr/:id - Get PR Detail & Items for PO Creation (MUST BE BEFORE /:id)
+// ==============================================
+router.get("/pr/:id", async (req, res) => {
+    try {
+        const [rows] = await pool.query(`SELECT * FROM purchase_requests WHERE id = ?`, [req.params.id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: "PR tidak ditemukan." });
+        }
+
+        const [items] = await pool.query(`SELECT * FROM pr_items WHERE pr_id = ?`, [req.params.id]);
+
+        res.json({ success: true, data: { ...rows[0], items } });
+    } catch (error) {
+        console.error("Error fetching PR detail:", error);
+        res.status(500).json({ success: false, message: "Gagal mengambil detail PR." });
+    }
+});
+
+// ==============================================
 // GET / - Daftar PO (filtered by role)
 // ==============================================
 router.get("/", async (req, res) => {
@@ -184,37 +216,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-// ==============================================
-// GET /vendors - List Vendor for Dropdown
-// ==============================================
-router.get("/vendors", async (req, res) => {
-    try {
-        const [rows] = await pool.query("SELECT id, nama FROM vendors ORDER BY nama ASC");
-        res.json({ success: true, data: rows });
-    } catch (error) {
-        console.error("Error fetching vendors:", error);
-        res.status(500).json({ success: false, message: "Gagal mengambil data vendor." });
-    }
-});
 
-// ==============================================
-// GET /pr/:id - Get PR Detail & Items for PO Creation
-// ==============================================
-router.get("/pr/:id", async (req, res) => {
-    try {
-        const [rows] = await pool.query(`SELECT * FROM purchase_requests WHERE id = ?`, [req.params.id]);
-        if (rows.length === 0) {
-            return res.status(404).json({ success: false, message: "PR tidak ditemukan." });
-        }
-
-        const [items] = await pool.query(`SELECT * FROM pr_items WHERE pr_id = ?`, [req.params.id]);
-
-        res.json({ success: true, data: { ...rows[0], items } });
-    } catch (error) {
-        console.error("Error fetching PR detail:", error);
-        res.status(500).json({ success: false, message: "Gagal mengambil detail PR." });
-    }
-});
 
 // ==============================================
 // POST / - Buat PO baru
