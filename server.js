@@ -16,6 +16,7 @@ const masterRoutes = require("./routes/master");
 const databaseRoutes = require("./routes/database");
 const vendorRoutes = require("./routes/vendors");
 const settingsRoutes = require("./routes/settings");
+const poRoutes = require("./routes/po"); // Import PO routes
 const { router: notificationRoutes } = require("./routes/notifications"); // Import notification router
 
 const app = express();
@@ -127,6 +128,7 @@ app.use("/api/admin/database", isAuthenticated, isAdmin, databaseRoutes);
 app.use("/api/admin/vendors", isAuthenticated, isAdmin, vendorRoutes);
 app.use("/api/settings", isAuthenticated, settingsRoutes);
 app.use("/api/notifications", isAuthenticated, notificationRoutes); // Register notification routes
+app.use("/api/po", isAuthenticated, poRoutes); // Register PO routes
 
 // ==========================================================
 // ## LAPORAN & NOTIFICATION ENDPOINTS ##
@@ -187,6 +189,14 @@ app.get("/api/notifications/count", isAuthenticated, async (req, res) => {
       query =
         "SELECT COUNT(*) as pendingCount FROM purchase_requests WHERE status = ?";
       values = ["Pending Manager Approval"];
+    } else if (role === "manager_ho") {
+      query =
+        "SELECT COUNT(*) as pendingCount FROM purchase_orders WHERE status = ?";
+      values = ["Pending Manager HO Approval"];
+    } else if (role === "direktur") {
+      query =
+        "SELECT COUNT(*) as pendingCount FROM purchase_orders WHERE status = ?";
+      values = ["Pending Direktur Approval"];
     } else {
       return res.json({ pendingCount: 0 });
     }
@@ -210,7 +220,7 @@ app.get("/init-db", async (req, res) => {
         company VARCHAR(100) DEFAULT NULL,
         \`user\` VARCHAR(50) NOT NULL UNIQUE,
         pass VARCHAR(255) NOT NULL,
-        role ENUM('admin', 'kerani', 'ktu', 'manager') NOT NULL DEFAULT 'kerani',
+        role ENUM('admin', 'kerani', 'ktu', 'manager', 'purchasing', 'manager_ho', 'direktur') NOT NULL DEFAULT 'kerani',
         name VARCHAR(100) NOT NULL,
         wa_number VARCHAR(20) UNIQUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

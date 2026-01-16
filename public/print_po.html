@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak PO - PT Sinar Permata Agro</title>
+    <link rel="stylesheet" href="/css/po.css">
+    <style>
+        /* Override for dedicated print page */
+        body {
+            background-color: #525659;
+            /* PDF viewer style bg */
+            font-family: Arial, sans-serif;
+        }
+
+        .print-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            margin: 20px auto;
+            padding: 15mm;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .no-print {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-print {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+            }
+
+            .print-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* Specific Layout from User Image */
+        .po-header-grid {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 20px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: auto;
+            float: left;
+            margin-right: 15px;
+        }
+
+        .company-info h1 {
+            font-size: 18pt;
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+            color: #004d40;
+            /* Dark Green */
+        }
+
+        .company-info p {
+            font-size: 8pt;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .po-title {
+            text-align: right;
+        }
+
+        .po-title h2 {
+            font-size: 16pt;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .po-meta table {
+            width: 100%;
+            font-size: 9pt;
+            border-collapse: collapse;
+        }
+
+        .po-meta td {
+            padding: 2px;
+            border: none;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            border: none;
+            /* User Image has weird borders, let's keep it clean or matching */
+        }
+
+        .info-header {
+            background-color: #dcedc8;
+            /* Light Green */
+            padding: 5px;
+            font-weight: bold;
+            font-size: 9pt;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .info-content {
+            font-size: 9pt;
+            padding: 5px;
+            border: 1px solid #ddd;
+            min-height: 80px;
+        }
+
+        .terms-box {
+            margin-bottom: 20px;
+        }
+
+        .items-table-print {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+            margin-bottom: 10px;
+        }
+
+        .items-table-print th {
+            background-color: #dcedc8;
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .items-table-print td {
+            border: 1px solid #000;
+            padding: 5px;
+        }
+
+        .summary-notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 250px;
+            gap: 20px;
+        }
+
+        .notes-list {
+            font-size: 8pt;
+            margin: 0;
+            padding-left: 15px;
+        }
+
+        .notes-list li {
+            margin-bottom: 2px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+
+        .summary-table td {
+            border: 1px solid #000;
+            padding: 4px;
+        }
+
+        .summary-table td:first-child {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+
+        .summary-table td:last-child {
+            text-align: right;
+        }
+
+        .keterangan-box {
+            margin-top: 10px;
+            border: 1px solid #000;
+            padding: 5px;
+            font-size: 9pt;
+            min-height: 40px;
+            margin-bottom: 40px;
+        }
+
+        .signature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            text-align: center;
+            font-size: 10pt;
+            gap: 10px;
+        }
+
+        .signature-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 120px;
+        }
+
+        .signature-line {
+            width: 80%;
+            border-bottom: 1px solid #000;
+            margin-top: auto;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print">
+        <button class="btn-print" onclick="window.print()">Cetak PO</button>
+        <button class="btn-print" style="background: #6c757d;" onclick="window.close()">Tutup</button>
+    </div>
+
+    <div class="print-container" id="print-area">
+        <div class="loading-text" id="loading">Memuat data PO...</div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const poId = urlParams.get('id');
+
+            if (!poId) {
+                alert("PO ID tidak ditemukan.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/po/${poId}`);
+                const data = await res.json();
+
+                if (!data.success) {
+                    throw new Error(data.message);
+                }
+
+                const po = data.data;
+                renderPO(po);
+            } catch (error) {
+                document.getElementById("loading").textContent = "Gagal memuat: " + error.message;
+            }
+        });
+
+        function renderPO(po) {
+            // Calculate Totals
+            const subtotal = po.total_amount / (po.include_ppn ? 1.11 : 1); // Check logic from user feedback
+            // Actually total_amount in DB is the Grand Total including PPN if applicable
+            // But let's check my logic in po_form.js:
+            // total = subtotal + ppn.
+            // So I should recalculate based on items if needed or assume logic
+
+            // Wait, DB stores total_amount as the final value.
+            // I need to reverse calc if I want subtotal/ppn separately for display.
+            // Let's recalculate from items for accuracy.
+            let calcSubtotal = 0;
+            po.items.forEach(item => {
+                calcSubtotal += parseFloat(item.total_harga);
+            });
+
+            const ppn = po.include_ppn ? (calcSubtotal * 0.11) : 0;
+            const grandTotal = calcSubtotal + ppn;
+
+            const html = `
+            <div class="po-header-grid">
+                <div>
+                     <div class="company-logo">
+                        <img src="/img/icon.png" alt="Logo" style="width:100%;" onerror="this.style.display='none'">
+                    </div> 
+                    <div class="company-info">
+                        <h1>PT SINAR PERMATA AGRO</h1>
+                        <p><strong>Head Office</strong><br>
+                        Jl. Jend. Sudirman Km 4, RT/RW 004/003 Kel. Bahtera Makmur Kota Kec. Bagan Sinembah<br>
+                        Kab. Rokan Hilir, Prov. Riau, Kode Pos - 28992 Telp : +6281280001970<br>
+                        E-mail : ptsinarpermataagro.ho@gmail.com | NPWP : 61.492.742.4-212.000</p>
+                    </div>
+                </div>
+                <div class="po-title">
+                    <h2>PURCHASE ORDER</h2>
+                    <div class="po-meta">
+                        <table>
+                            <tr><td><strong>Date</strong></td><td>: ${formatDate(po.tanggal)}</td></tr>
+                            <tr><td><strong>No. PO</strong></td><td>: ${po.po_no}</td></tr>
+                            <tr><td><strong>No. PR</strong></td><td>: ${po.pr_no}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-header">VENDOR</div>
+                    <div class="info-content">
+                        <strong>${po.vendor_nama}</strong><br>
+                        ${po.vendor_hp || ""}<br>
+                        ${po.vendor_alamat || ""}
+                    </div>
+                </div>
+                <div class="info-box">
+                    <div class="info-header">ALAMAT PENGIRIMAN</div>
+                    <div class="info-content">
+                        <strong>Kantor Estate (SPA)</strong><br>
+                        Bpk. Binron Pasaribu (EM) +62 823 7150 5403<br>
+                        Alamat:<br>
+                        Jl. Lintas Tanjung Medan, Kec. Tanjung Medan Kab. Rokan Hilir
+                    </div>
+                </div>
+            </div>
+
+            <div class="terms-box">
+                <div class="info-header" style="width: 50%; text-align: center;">KETENTUAN PENGIRIMAN</div>
+                <div style="border: 1px solid #000; padding: 5px; width: 50%; text-align: center; font-size: 9pt;">
+                    Paling Lambat 7 Hari Setelah PO diterima
+                </div>
+            </div>
+
+            <table class="items-table-print">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Kode Produk</th>
+                        <th style="width: 35%">Deskripsi Produk</th>
+                        <th style="width: 10%">Satuan</th>
+                        <th style="width: 10%">Kuantitas</th>
+                        <th style="width: 15%">Harga/Satuan</th>
+                        <th style="width: 15%">Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${po.items.map(item => `
+                    <tr>
+                        <td style="text-align: center;">-</td> 
+                        <td>${item.material}</td>
+                        <td style="text-align: center;">${item.satuan}</td>
+                        <td style="text-align: center;">${parseFloat(item.qty).toLocaleString('id-ID')}</td>
+                        <td style="text-align: right;">${parseFloat(item.harga_satuan).toLocaleString('id-ID')}</td>
+                        <td style="text-align: right;">${parseFloat(item.total_harga).toLocaleString('id-ID')}</td>
+                    </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <div class="summary-notes-grid">
+                <div>
+                    <div style="font-size: 9pt; font-weight: bold; background: #dcedc8; padding: 3px; margin-bottom: 5px;">Catatan:</div>
+                    <ul class="notes-list">
+                        <li>Pada saat pengiriman barang wajib melampirkan DO/Surat Jalan</li>
+                        <li>No PO wajib dicantumkan di DO/Surat jalan dan Invoice</li>
+                        <li>Invoice dapat ditagihkan setelah pengiriman barang diterima di alamat pengiriman</li>
+                        <li>Invoice diproses paling lambat 14 hari kerja setelah diterima</li>
+                        <li>Setelah PO diterima oleh Vendor wajib dikirimkan Softcopy yang sudah di TTD dan Stempel</li>
+                    </ul>
+                </div>
+                <div>
+                    <table class="summary-table">
+                        <tr>
+                            <td>Subtotal (Rp)</td>
+                            <td>${Math.round(calcSubtotal).toLocaleString('id-ID')}</td>
+                        </tr>
+                        <tr>
+                            <td>DPP</td>
+                            <td>${Math.round(calcSubtotal).toLocaleString('id-ID')}</td>
+                        </tr>
+                        <tr>
+                            <td>PPN 11%</td>
+                            <td>${Math.round(ppn).toLocaleString('id-ID')}</td>
+                        </tr>
+                        <tr style="border-top: 2px solid #000;">
+                            <td style="background: #dcedc8;">Total (Rp)</td>
+                            <td style="font-weight: bold;">${Math.round(grandTotal).toLocaleString('id-ID')}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="keterangan-box">
+                <strong>Keterangan:</strong><br>
+                ${po.keperluan}
+            </div>
+
+            <div class="signature-grid">
+                <div class="signature-box">
+                    <span>Dibuat Oleh,</span>
+                    <!-- Purchasing Signature -->
+                    <div style="height: 50px;"></div>
+                    <div class="signature-line"></div>
+                    <strong>Purchasing</strong>
+                </div>
+                <div class="signature-box">
+                    <span>Diperiksa Oleh,</span>
+                    <!-- Manager Signature -->
+                     <img src="/img/ttd_manager.png" style="height: 50px; opacity: 0.5;" onerror="this.style.display='none'">
+                    <div class="signature-line"></div>
+                    <strong>Manager</strong>
+                </div>
+                <div class="signature-box">
+                    <span>Disetujui Oleh,</span>
+                    <!-- Direktur Signature -->
+                    <div style="height: 50px;"></div>
+                    <div class="signature-line"></div>
+                    <strong>Direktur</strong>
+                </div>
+                <div class="signature-box">
+                    <span>Diterima Oleh,</span>
+                    <!-- Vendor Signature -->
+                    <div style="height: 50px;"></div>
+                    <div class="signature-line"></div>
+                    <strong>Vendor</strong>
+                </div>
+            </div>
+        `;
+
+            document.getElementById("print-area").innerHTML = html;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "-";
+            const date = new Date(dateStr);
+            const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+            return `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear().toString().substr(-2)}`;
+        }
+    </script>
+
+</body>
+
+</html>
