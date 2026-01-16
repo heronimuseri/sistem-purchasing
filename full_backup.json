@@ -368,5 +368,13 @@
       "qty": 2,
       "satuan": "Buah"
     }
-  ]
+  ],
+  "po_counters": [],
+  "purchase_orders": [],
+  "po_items": [],
+  "invoice_counters": [],
+  "invoices": [],
+  "invoice_po": [],
+  "push_subscriptions": [],
+  "system_settings": []
 }
