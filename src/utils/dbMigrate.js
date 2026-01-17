@@ -49,8 +49,8 @@ async function runMigrations() {
     // 2. Vendors
     await runSQLFile(connection, path.join(__dirname, '../database/migration_vendors.sql'));
 
-    // 3. PO System & Invoices
-    await runSQLFile(connection, path.join(__dirname, '../database/po_migration.sql'));
+    // 3. PO System & Invoices - Integrated into schema.sql
+    // await runSQLFile(connection, path.join(__dirname, '../database/po_migration.sql'));
 
     // 4. Additional System Settings (Legacy/Special)
     await connection.query(`

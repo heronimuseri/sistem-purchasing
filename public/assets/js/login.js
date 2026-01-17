@@ -27,8 +27,9 @@ document
         localStorage.setItem("userRole", result.user.role);
         localStorage.setItem("userName", result.user.name);
 
+        console.log("Login success, role:", result.user.role);
         if (result.user.role === "admin") {
-          window.location.href = "/dashboard.html"; // Unified dashboard
+          window.location.href = "/admin.html";
         } else {
           window.location.href = "/dashboard.html";
         }
