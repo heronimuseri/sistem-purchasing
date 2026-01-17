@@ -1,0 +1,573 @@
+/* public/css/daftarpr.css - Tema Hijau */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg-color: #f9f9f7;
+  --panel-color: #ffffff;
+  --text-color: #333333;
+  --muted-color: #6c757d;
+  --primary-color: #6a7b31; /* Hijau seperti pr.css */
+  --primary-dark: #4e5c25;
+  --border-color: #e9ecef;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --border-radius: 12px;
+
+  --status-pending-bg: #fffbeb;
+  --status-pending-text: #f59e0b;
+  --status-approved-bg: #ecfdf5;
+  --status-approved-text: #059669;
+  --status-rejected-bg: #fef2f2;
+  --status-rejected-text: #ef4444;
+
+  --success-color: #22c55e;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+}
+
+/* =================================
+   GAYA DASAR & LAYOUT
+==================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 0 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--primary-color);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =================================
+   TOMBOL & TOOLBAR
+==================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary-color);
+}
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(106, 123, 49, 0.3);
+}
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: var(--text-color);
+}
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+.btn-success:hover {
+  background-color: #16a34a;
+}
+
+.toolbar {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+#searchInput {
+  flex-grow: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+}
+#searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(106, 123, 49, 0.2);
+}
+
+/* =================================
+   TABEL (TAMPILAN LAYAR)
+==================================== */
+.table-wrapper {
+  background-color: var(--panel-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead th {
+  text-align: left;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-color);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+table tbody td {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+table tbody tr:hover {
+  background-color: #fcfcfc;
+}
+
+.status {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status.pending-ktu-approval,
+.status.pending-manager-approval,
+.status.unknown {
+  background-color: var(--status-pending-bg);
+  color: var(--status-pending-text);
+}
+.status.fully-approved {
+  background-color: var(--status-approved-bg);
+  color: var(--status-approved-text);
+}
+.status.rejected {
+  background-color: var(--status-rejected-bg);
+  color: var(--status-rejected-text);
+}
+
+.action-cell {
+  display: flex;
+  gap: 8px;
+}
+.action-cell .btn-sm {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.btn-approve {
+  background-color: var(--success-color);
+  color: white;
+}
+.btn-reject {
+  background-color: var(--danger-color);
+  color: white;
+}
+.btn-review {
+  background-color: var(--warning-color);
+  color: white;
+}
+.btn-print {
+  background-color: #6366f1;
+  color: white;
+}
+.action-cell .btn-sm:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+.loading-text {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted-color);
+}
+
+/* =================================
+   NOTIFIKASI DALAM APLIKASI
+==================================== */
+.notification-icon-container {
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  color: var(--muted-color);
+  transition: color 0.3s;
+  margin-right: 15px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  padding: 3px 7px;
+  border-radius: 50%;
+  background-color: var(--danger-color);
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  border: 2px solid var(--bg-color);
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.has-notification .notification-icon-container {
+  color: var(--danger-color);
+}
+
+.has-notification .notification-badge {
+  animation: pulse-red 2s infinite;
+}
+
+/* =================================
+   GAYA TEMPLATE CETAK (UMUM)
+==================================== */
+.stamp {
+  font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 5px;
+  transform: rotate(-10deg);
+  display: inline-block;
+  border-width: 3px;
+  border-style: solid;
+}
+.stamp.requested {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+.stamp.checked {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+.stamp.approved {
+  border-color: #059669;
+  color: #059669;
+}
+
+/* =================================
+   LOGIKA TAMPILAN LAYAR VS CETAK
+==================================== */
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  body {
+    background-color: #fff !important;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+
+  .card-header-print {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .header-meta-print {
+    margin-top: 100px;
+  }
+
+  .header-brand-print {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .header-brand-print img {
+    height: 60px;
+  }
+  .company-title {
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0;
+  }
+  .title {
+    font-size: 16pt;
+    margin: 5px 0 0;
+  }
+  .subtitle {
+    font-style: italic;
+    margin: 0;
+    font-size: 11pt;
+    color: #555;
+  }
+  .header-meta-print .label {
+    font-weight: bold;
+    white-space: nowrap;
+    padding-right: 8px;
+    vertical-align: top;
+  }
+
+  .header-meta-print .value {
+    width: 100%;
+    vertical-align: top;
+  }
+
+  .table-wrap-print {
+    margin-top: 20px;
+  }
+  .table-wrap-print table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+  .table-wrap-print th,
+  .table-wrap-print td {
+    border: 1px solid #333 !important;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  .table-wrap-print thead th {
+    background-color: #e9ecef !important;
+    font-weight: bold;
+  }
+
+  .signature-table,
+  .signatures-print-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+    page-break-inside: avoid;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+
+  .signature-table tbody,
+  .signatures-print-table tbody {
+    display: table-row-group !important;
+  }
+
+  .signature-table tr,
+  .signatures-print-table tr {
+    display: table-row !important;
+  }
+
+  .signature-table th,
+  .signature-table td,
+  .signatures-print-table th,
+  .signatures-print-table td {
+    display: table-cell !important;
+    width: 33.33% !important;
+    text-align: center !important;
+    padding: 8px !important;
+    border: 1px solid #000 !important;
+  }
+
+  .signature-table td,
+  .signatures-print-table td {
+    height: 150px;
+    vertical-align: bottom !important;
+  }
+
+  .signature-table th,
+  .signatures-print-table th {
+    background-color: #e9ecef !important;
+    font-weight: bold;
+    height: auto;
+  }
+
+  .signature-space {
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+
+  .signature-date {
+    font-size: 8pt;
+    color: #555;
+    margin-bottom: 5px;
+  }
+
+  .signature-name {
+    font-weight: bold;
+    margin-bottom: 2px;
+  }
+
+  .signature-role {
+    font-size: 9pt;
+  }
+}
+
+/* =================================
+   NOTIFIKASI PENDING APPROVAL - FINAL
+==================================== */
+.pending-notification {
+  margin-bottom: 20px;
+  animation: slideDown 0.5s ease-out;
+  display: none; /* Sembunyikan secara default */
+}
+
+.notification-alert {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  position: relative;
+}
+
+.notification-alert i.fa-clock {
+  font-size: 24px;
+  color: #f59e0b;
+  background-color: white;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-content strong {
+  display: block;
+  font-size: 16px;
+  color: #d97706;
+  margin-bottom: 4px;
+}
+
+.notification-content span {
+  font-size: 14px;
+  color: #92400e;
+}
+
+.pending-count {
+  font-weight: 700;
+  color: #dc2626;
+  font-size: 16px;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.notification-close:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #6b7280;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-gentle {
+  0% {
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  }
+}
+
+.notification-alert.pulse {
+  animation: pulse-gentle 2s infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notification-alert {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .notification-alert i.fa-clock {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  .notification-content strong {
+    font-size: 14px;
+  }
+
+  .notification-content span {
+    font-size: 13px;
+  }
+}

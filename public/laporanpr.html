@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laporan Purchase Request - Sinar Permata Agro</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/daftarpr.css" />
+    <link rel="stylesheet" href="/css/laporanpr.css" />
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SPA PR" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <div class="container screen-only">
+      <!-- Header Laporan yang Lebih Menarik -->
+      <div class="laporan-header">
+        <h1>
+          <i class="fa-solid fa-file-invoice-dollar"></i> Laporan Purchase
+          Request
+        </h1>
+        <p>Lihat dan kelola semua data Purchase Request perusahaan Anda</p>
+
+        <div class="laporan-actions">
+          <a href="/dashboard.html" class="dashboard-btn">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+          </a>
+          <button id="export-excel-btn" class="export-btn">
+            <i class="fa-solid fa-file-excel"></i> Export ke Excel
+          </button>
+        </div>
+      </div>
+
+      <!-- Statistik Ringkas -->
+      <div class="laporan-stats">
+        <div class="stat-card">
+          <div class="number" id="total-pr">0</div>
+          <div class="label">Total PR</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="pending-count">0</div>
+          <div class="label">Menunggu Persetujuan</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="approved-count">0</div>
+          <div class="label">Disetujui</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="rejected-count">0</div>
+          <div class="label">Ditolak</div>
+        </div>
+      </div>
+
+      <!-- Tabel Laporan -->
+      <div class="table-container">
+        <div class="table-header">
+          <div class="table-title">Data Purchase Request Detail</div>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Cari data laporan..."
+            />
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="reportTable">
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center">No</th>
+                <th style="width: 15%">PR No.</th>
+                <th style="width: 10%">Tanggal</th>
+                <th style="width: 15%">Diminta Oleh</th>
+                <th style="width: 20%">Untuk kebutuhan / Uraian</th>
+                <th style="width: 10%">Status</th>
+                <th style="width: 15%">Nama & Spesifikasi Barang</th>
+                <th style="width: 5%; text-align: right">Qty</th>
+                <th style="width: 5%">Satuan</th>
+              </tr>
+            </thead>
+            <tbody id="requests-table-body">
+              <tr>
+                <td colspan="9">
+                  <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Memuat data laporan detail...</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load daftarpr_main.js hanya untuk fungsi normalizeReportItem -->
+    <script src="/js/daftarpr_main.js"></script>
+    <!-- Load laporanpr.js untuk fungsi khusus laporan -->
+    <script src="/js/laporanpr.js"></script>
+    <script src="/js/pwa.js"></script>
+  </body>
+</html>

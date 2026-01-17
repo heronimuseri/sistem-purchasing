@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Purchasing System</title>
+    <link rel="stylesheet" href="/css/all.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SPA PR" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Menu Utama</h1>
+        <div class="header-actions">
+          <span id="user-info"></span>
+          <button id="logout-btn" class="btn btn-secondary">Logout</button>
+        </div>
+      </header>
+
+      <main>
+        <h2>Purchasing</h2>
+        <div class="menu-grid">
+          <a href="/pr.html" class="menu-item">
+            <div class="menu-icon"><i class="fa-solid fa-file-pen"></i></div>
+            <div class="menu-title">Buat PR Baru</div>
+            <div class="menu-desc">
+              Mengisi form permintaan pembelian barang.
+            </div>
+          </a>
+          <a href="/daftarpr.html" class="menu-item">
+            <div class="menu-icon"><i class="fa-solid fa-list-check"></i></div>
+            <div class="menu-title">Daftar PR</div>
+            <div class="menu-desc">
+              Lihat semua permintaan Anda dan statusnya.
+            </div>
+          </a>
+        </div>
+
+        <div id="admin-menu-section" class="hidden">
+          <h2 style="margin-top: 40px">Administrasi</h2>
+          <div class="menu-grid">
+            <a href="/laporanpr.html" class="menu-item">
+              <div class="menu-icon">
+                <i class="fa-solid fa-file-excel"></i>
+              </div>
+              <div class="menu-title">Laporan Purchasing</div>
+              <div class="menu-desc">Laporan PR</div>
+            </a>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="/js/pwa.js"></script>
+    <script src="/js/dashboard.js"></script>
+  </body>
+  <footer
+    style="
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 12px;
+      text-align: center;
+      font: 500 12px/1.4 system-ui, Segoe UI, Roboto, Arial;
+      border: 0;
+    "
+  >
+    © by heronimuseri
+  </footer>
+</html>
