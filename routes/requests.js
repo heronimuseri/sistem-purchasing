@@ -316,17 +316,25 @@ router.post("/:id/approve", async (req, res) => {
 
     const currentStatus = rows[0].status;
     const prNo = rows[0].pr_no;
+    const fs = require('fs');
+    const logStream = fs.createWriteStream('./server.log', { flags: 'a' });
+    const logToFile = (msg) => {
+      const timestamp = new Date().toISOString();
+      logStream.write(`[${timestamp}] [REQUESTS] ${msg}\n`);
+    };
+
     let nextStatus = "";
     let queryUpdate = "";
     let notifTargetRole = ""; // Role target notifikasi selanjutnya
+    logToFile(`PR Approval Check: ID=${id}, Role=${role}, Status=${currentStatus}`);
 
-    if (role === "ktu" && currentStatus === "Pending KTU Approval") {
+    if ((role === "ktu" || role === "admin") && currentStatus === "Pending KTU Approval") {
       nextStatus = "Pending Manager Approval";
       queryUpdate =
         "UPDATE purchase_requests SET status = ?, ktu_name = ?, approval_ktu_date = NOW() WHERE id = ?";
       notifTargetRole = "manager";
     } else if (
-      role === "manager" &&
+      (role === "manager" || role === "admin") &&
       currentStatus === "Pending Manager Approval"
     ) {
       nextStatus = "Fully Approved";

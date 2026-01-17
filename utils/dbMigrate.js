@@ -1,12 +1,58 @@
 const pool = require('../db');
+const fs = require('fs');
+const path = require('path');
+
+async function runSQLFile(connection, filePath) {
+  if (!fs.existsSync(filePath)) {
+    console.warn(`[MIGRATION] File not found: ${filePath}`);
+    return;
+  }
+
+  console.log(`[MIGRATION] Executing ${path.basename(filePath)}...`);
+  const sqlContent = fs.readFileSync(filePath, 'utf8');
+
+  // Remove comments and split by semicolon
+  const statements = sqlContent
+    .replace(/--.*$/gm, '') // Remove single line comments
+    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove block comments
+    .split(';')
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
+  for (const statement of statements) {
+    // Skip empty statements or simple transaction controls if needed
+    if (statement.toUpperCase() === 'BEGIN' || statement.toUpperCase() === 'COMMIT') continue;
+
+    try {
+      await connection.query(statement);
+    } catch (err) {
+      // Ignore benign errors
+      if (err.message.includes("already exists") || err.message.includes("Duplicate column name")) {
+        // fine
+      } else {
+        console.warn(`[MIGRATION] Warning in ${path.basename(filePath)}: ${err.message}`);
+        // console.warn(`Statement: ${statement.substring(0, 50)}...`);
+      }
+    }
+  }
+}
 
 async function runMigrations() {
   let connection;
   try {
     connection = await pool.getConnection();
-    console.log('[MIGRATION] Checking database schema...');
+    console.log('[MIGRATION] Starting database migration...');
 
-    // 1. Existing System Settings Migration
+    // 1. Core Schema (Users, PRs)
+    await runSQLFile(connection, path.join(__dirname, '../database/schema.sql'));
+
+    // 2. Vendors
+    await runSQLFile(connection, path.join(__dirname, '../database/migration_vendors.sql'));
+
+    // 3. PO System & Invoices
+    await runSQLFile(connection, path.join(__dirname, '../database/po_migration.sql'));
+
+    // 4. Additional System Settings (Legacy/Special)
     await connection.query(`
             CREATE TABLE IF NOT EXISTS system_settings (
                 setting_key VARCHAR(50) PRIMARY KEY,
@@ -21,54 +67,23 @@ async function runMigrations() {
             VALUES ('wa_notifications_enabled', 'true', 'Enable or disable WhatsApp notifications globally')
         `);
 
-    // 2. Reject Reason Column
-    const [columns] = await connection.query(`
-            SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
-            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'purchase_requests' AND COLUMN_NAME = 'reject_reason'
-        `);
-
-    if (columns.length === 0) {
-      console.log('[MIGRATION] Adding reject_reason column...');
-      await connection.query(`ALTER TABLE purchase_requests ADD COLUMN reject_reason TEXT DEFAULT NULL AFTER status`);
-    }
-
-    // 3. PO SYSTEM MIGRATION (Read from file)
-    const fs = require('fs');
-    const path = require('path');
-    const migrationPath = path.join(__dirname, '../database/po_migration.sql');
-
-    if (fs.existsSync(migrationPath)) {
-      console.log('[MIGRATION] Running PO System Migration from file...');
-      const sqlContent = fs.readFileSync(migrationPath, 'utf8');
-
-      // Remove comments and split by semicolon
-      // Simple regex to remove -- comments
-      const cleanedSql = sqlContent.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-
-      const statements = cleanedSql.split(';')
-        .map(s => s.trim())
-        .filter(s => s.length > 0);
-
-      for (const statement of statements) {
-        // Skip SET FOREIGN_KEY_CHECKS if causing issues, but usually fine
-        try {
-          await connection.query(statement);
-        } catch (err) {
-          // Ignore "Table already exists" errors or similar minor issues
-          if (!err.message.includes("already exists")) {
-            console.warn(`[MIGRATION] Warning executing statement: ${statement.substring(0, 50)}... - ${err.message}`);
-          }
-        }
+    // 5. Ensure reject_reason exists on PR (Migration fix)
+    try {
+      const [columns] = await connection.query(`
+                SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+                WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'purchase_requests' AND COLUMN_NAME = 'reject_reason'
+            `);
+      if (columns.length === 0) {
+        await connection.query(`ALTER TABLE purchase_requests ADD COLUMN reject_reason TEXT DEFAULT NULL AFTER status`);
       }
-      console.log(`[MIGRATION] Executed ${statements.length} statements from po_migration.sql`);
-    } else {
-      console.warn('[MIGRATION] po_migration.sql not found! Skipping PO migration.');
+    } catch (e) {
+      // ignore if table doesn't exist yet (though schema should have created it)
     }
 
-    console.log('[MIGRATION] Database check completed successfully.');
+    console.log('[MIGRATION] Database migration completed successfully.');
 
   } catch (error) {
-    console.error('[MIGRATION] Error during migration:', error);
+    console.error('[MIGRATION] Critical Error:', error);
   } finally {
     if (connection) connection.release();
   }

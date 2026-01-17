@@ -8,13 +8,22 @@ router.post("/login", async (req, res) => {
   // ==========================================================
   // ## LOG BARU: Cek apakah request masuk ke fungsi ini ##
   // ==========================================================
-  console.log("\n--- LOGIN ROUTE REACHED ---");
-  console.log("Request Body Diterima:", req.body);
-  console.log("---------------------------\n");
+  // ==========================================================
+  const fs = require('fs');
+  const logStream = fs.createWriteStream('./server.log', { flags: 'a' });
+  const logToFile = (msg) => {
+    const timestamp = new Date().toISOString();
+    logStream.write(`[${timestamp}] ${msg}\n`);
+    console.log(msg);
+  };
+
+  logToFile("\n--- LOGIN ROUTE REACHED ---");
+  logToFile(`Request Body Diterima: ${JSON.stringify(req.body)}`);
   // ==========================================================
 
   const { company, user, password } = req.body;
-  const query = "SELECT * FROM users WHERE company = ? AND `user` = ?";
+  // Gunakan fungsi LOWER untuk pencarian case-insensitive agar lebih toleran
+  const query = "SELECT * FROM users WHERE LOWER(company) = LOWER(?) AND LOWER(`user`) = LOWER(?)";
 
   try {
     const [rows] = await pool.query(query, [company, user]);
@@ -23,7 +32,10 @@ router.post("/login", async (req, res) => {
       const foundUser = rows[0];
       const match = await bcrypt.compare(password, foundUser.pass);
 
-      console.log("Hasil bcrypt.compare:", match); // Tambahan log untuk hasil
+      console.log("User found:", foundUser.user);
+      console.log("DB Hash:", foundUser.pass);
+      console.log("Input Password:", password);
+      console.log("Match Result:", match);
 
       if (match) {
         req.session.user = {
@@ -36,14 +48,16 @@ router.post("/login", async (req, res) => {
           user: { role: foundUser.role, name: foundUser.name },
         });
       } else {
+        console.log("LOGIN FAIL: Password mismatch");
         res
           .status(401)
-          .json({ success: false, message: "Kredensial tidak valid." });
+          .json({ success: false, message: "Kredensial tidak valid. (Pass Mismatch)" });
       }
     } else {
+      console.log("LOGIN FAIL: User not found for", company, user);
       res
         .status(401)
-        .json({ success: false, message: "Kredensial tidak valid." });
+        .json({ success: false, message: "Kredensial tidak valid. (User Not Found)" });
     }
   } catch (error) {
     console.error("Database error during login:", error);
@@ -54,4 +68,23 @@ router.post("/login", async (req, res) => {
 });
 
 // ... rute logout
+// Endpoint Check Session
+router.get("/session", (req, res) => {
+  if (req.session.user) {
+    res.json({ loggedIn: true, user: req.session.user });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
+// Endpoint Logout
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "Gagal logout" });
+    }
+    res.json({ success: true, message: "Logged out successfully" });
+  });
+});
+
 module.exports = router;

@@ -114,7 +114,7 @@ async function initCreatePage() {
 
 async function loadVendors() {
     try {
-        const res = await axios.get('/api/admin/vendors'); // Using admin route or public if available
+        const res = await axios.get('/api/po/vendors'); // Use public/shared vendor list endpoint
         const vendors = res.data; // Assuming direct array or {data: []}
         const select = $('#vendorSelect');
         // Handle different response structures if needed. Assuming array based on previous files.
