@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Master User - Admin Panel</title>
+  <link rel="stylesheet" href="/assets/css/all.min.css" type="text/css" />
+  <link rel="stylesheet" href="/assets/css/admin_user.css" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SPA PR" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fa-solid fa-users-gear"></i> Master User</h1>
+      <div class="header-actions">
+        <a href="admin.html" class="btn btn-secondary">Kembali ke Panel Admin</a>
+        <button id="logout-btn" class="btn btn-secondary">Logout</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <p>Kelola semua pengguna yang terdaftar di dalam sistem.</p>
+        <button class="btn btn-primary" id="add-user-btn">
+          <i class="fa-solid fa-plus"></i> Tambah User
+        </button>
+      </div>
+      <div class="card-content">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NAMA</th>
+                <th>COMPANY ID</th>
+                <th>USER ID</th>
+                <th>PERAN</th>
+                <th>AKSI</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="user-modal-overlay">
+    <div class="modal-content">
+      <h2 id="modal-title">Tambah User Baru</h2>
+      <form id="user-form">
+        <input type="hidden" id="user-id" />
+        <div class="field">
+          <label for="user-name">Nama Lengkap</label>
+          <input type="text" id="user-name" required />
+        </div>
+        <div class="field">
+          <label for="user-userid">User ID (untuk login)</label>
+          <input type="text" id="user-userid" required />
+        </div>
+        <div class="field">
+          <label for="user-company">Company ID</label>
+          <input type="text" id="user-company" required />
+        </div>
+        <div class="field">
+          <label for="user-role">Peran (Role)</label>
+          <select id="user-role" required>
+            <option value="admin">admin</option>
+            <option value="kerani">kerani</option>
+            <option value="ktu">ktu</option>
+            <option value="manager">manager</option>
+            <option value="purchasing">purchasing</option>
+            <option value="manager_ho">manager_ho</option>
+            <option value="direktur">direktur</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="user-password">Password</label>
+          <input type="password" id="user-password" />
+          <small class="muted-text">Kosongkan jika tidak ingin mengubah password.</small>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-btn">
+            Batal
+          </button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="/assets/js/pwa.js"></script>
+  <script src="/assets/js/admin_user.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log("Service Worker registered:", registration);
+          })
+          .catch((error) => {
+            console.log("Service Worker registration failed:", error);
+          });
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -6,18 +6,19 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 const helmet = require("helmet");
-const pool = require("./db");
+const pool = require("./src/config/db"); // UPDATED PATH
 
 // Impor rute
-const authRoutes = require("./routes/auth");
-const requestRoutes = require("./routes/requests");
-const userRoutes = require("./routes/users");
-const masterRoutes = require("./routes/master");
-const databaseRoutes = require("./routes/database");
-const vendorRoutes = require("./routes/vendors");
-const settingsRoutes = require("./routes/settings");
-const poRoutes = require("./routes/po"); // Import PO routes
-const { router: notificationRoutes } = require("./routes/notifications"); // Import notification router
+const authRoutes = require("./src/routes/auth"); // UPDATED PATH
+const requestRoutes = require("./src/routes/requests"); // UPDATED PATH
+const userRoutes = require("./src/routes/users"); // UPDATED PATH
+const masterRoutes = require("./src/routes/master"); // UPDATED PATH
+const databaseRoutes = require("./src/routes/database"); // UPDATED PATH
+const vendorRoutes = require("./src/routes/vendors"); // UPDATED PATH
+const settingsRoutes = require("./src/routes/settings"); // UPDATED PATH
+const poRoutes = require("./src/routes/po"); // Import PO routes // UPDATED PATH
+const { router: notificationRoutes } = require("./src/routes/notifications"); // Import notification router // UPDATED PATH
+const laporanRoutes = require("./src/routes/laporan"); // Import Laporan routes // UPDATED PATH
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -58,7 +59,8 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // --- DYNAMIC SERVICE WORKER ---
-// Serve sw.js with dynamic version to force update
+// Serve sw.js from public root (or views if we moved it?)
+// We left sw.js in public root (Step 37 showed it there).
 app.get('/sw.js', (req, res) => {
   const swPath = path.join(__dirname, 'public', 'sw.js');
   fs.readFile(swPath, 'utf8', (err, data) => {
@@ -80,9 +82,21 @@ app.get('/sw.js', (req, res) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, "public"), {
+// Serve Assets
+app.use("/assets", express.static(path.join(__dirname, "public/assets"), {
   setHeaders: function (res, path) {
-    if (path.endsWith(".html") || path.endsWith(".css") || path.endsWith(".js")) {
+    if (path.endsWith(".css") || path.endsWith(".js")) {
+      res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+      res.set("Pragma", "no-cache");
+      res.set("Expires", "0");
+    }
+  }
+}));
+
+// Serve Views (HTML) as Root
+app.use(express.static(path.join(__dirname, "public/views"), {
+  setHeaders: function (res, path) {
+    if (path.endsWith(".html")) {
       res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
       res.set("Pragma", "no-cache");
       res.set("Expires", "0");
@@ -90,6 +104,9 @@ app.use(express.static(path.join(__dirname, "public"), {
     }
   }
 }));
+
+// Serve Public Root (Manifest, etc)
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
@@ -129,87 +146,8 @@ app.use("/api/admin/vendors", isAuthenticated, isAdmin, vendorRoutes);
 app.use("/api/settings", isAuthenticated, settingsRoutes);
 app.use("/api/notifications", isAuthenticated, notificationRoutes); // Register notification routes
 app.use("/api/po", isAuthenticated, poRoutes); // Register PO routes
-app.use("/api/invoices", isAuthenticated, require("./routes/invoices")); // Register Invoice routes
-
-
-// ==========================================================
-// ## LAPORAN & NOTIFICATION ENDPOINTS ##
-// ==========================================================
-
-// Endpoint untuk laporan detail - HANYA SATU VERSI
-app.get("/api/laporan/detail", isAuthenticated, async (req, res) => {
-  try {
-    console.log(
-      "Accessing laporan detail endpoint - User:",
-      req.session.user.name,
-      "Role:",
-      req.session.user.role
-    );
-
-    const query = `
-      SELECT 
-        pr.pr_no as 'PR No.',
-        pr.tanggal as 'Tanggal',
-        pr.requester_name as 'Diminta Oleh',
-        pr.keperluan as 'Untuk Kebutuhan / Uraian',
-        pr.status as 'Status',
-        items.material as 'Nama & Spesifikasi Barang',
-        items.qty as 'Qty',
-        items.satuan as 'Satuan'
-      FROM purchase_requests pr
-      JOIN pr_items items ON pr.id = items.pr_id
-      ORDER BY pr.tanggal DESC, pr.pr_no
-    `;
-
-    const [rows] = await pool.query(query);
-    console.log(
-      `Laporan detail data fetched: ${rows.length} rows for user ${req.session.user.name}`
-    );
-
-    res.json(rows);
-  } catch (error) {
-    console.error("Error fetching laporan detail:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal mengambil data laporan detail.",
-    });
-  }
-});
-
-// Endpoint untuk notifikasi count
-app.get("/api/notifications/count", isAuthenticated, async (req, res) => {
-  try {
-    const { role } = req.session.user;
-    let query = "";
-    let values = [];
-
-    if (role === "ktu") {
-      query =
-        "SELECT COUNT(*) as pendingCount FROM purchase_requests WHERE status = ?";
-      values = ["Pending KTU Approval"];
-    } else if (role === "manager") {
-      query =
-        "SELECT COUNT(*) as pendingCount FROM purchase_requests WHERE status = ?";
-      values = ["Pending Manager Approval"];
-    } else if (role === "manager_ho") {
-      query =
-        "SELECT COUNT(*) as pendingCount FROM purchase_orders WHERE status = ?";
-      values = ["Pending Manager HO Approval"];
-    } else if (role === "direktur") {
-      query =
-        "SELECT COUNT(*) as pendingCount FROM purchase_orders WHERE status = ?";
-      values = ["Pending Direktur Approval"];
-    } else {
-      return res.json({ pendingCount: 0 });
-    }
-
-    const [result] = await pool.query(query, values);
-    res.json({ pendingCount: result[0].pendingCount });
-  } catch (error) {
-    console.error("Error fetching notification count:", error);
-    res.json({ pendingCount: 0 });
-  }
-});
+app.use("/api/invoices", isAuthenticated, require("./src/routes/invoices")); // Register Invoice routes // UPDATED PATH
+app.use("/api/laporan", isAuthenticated, laporanRoutes); // Register Laporan routes
 
 // FAIL-SAFE: Redirect Login.html (Kapital) ke login.html (Huruf kecil)
 // Ini menangani cache browser lama yang masih request ke file kapital
@@ -219,10 +157,14 @@ app.get("/Login.html", (req, res) => {
 
 // Rute default untuk menyajikan halaman login
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
+  // Since we serve public/views as static root, "login.html" is at root.
+  // But purely for explicit fallback:
+  res.redirect("/login.html");
+  // OR res.sendFile(path.join(__dirname, "public/views", "login.html"));
 });
 
-// Serve manifest.json dengan header yang tepat
+// Serve manifest.json dengan header yang tepat (manifest is in public/manifest.json usually, or assets?)
+// Keeping manifest in public root is standard for PWA scope.
 app.get("/manifest.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.sendFile(path.join(__dirname, "public", "manifest.json"));
@@ -239,6 +181,10 @@ app.listen(PORT, async () => {
   console.log(`Server berjalan di http://localhost:${PORT} (Start Time: ${global.SERVER_START_TIME})`);
 
   // Auto-run migrations on startup
-  const runMigrations = require('./utils/dbMigrate');
-  await runMigrations();
+  try {
+    const runMigrations = require('./src/utils/dbMigrate'); // UPDATED PATH
+    await runMigrations();
+  } catch (err) {
+    console.error("Migration failed:", err);
+  }
 });

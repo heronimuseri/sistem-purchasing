@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Tagihan Baru - Sistem Purchasing</title>
+    <!-- Removed Tailwind CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="/assets/css/tagihan.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-container">
+            <a href="dashboard.html" class="nav-brand">
+                <i class="fas fa-file-invoice"></i>
+                <span>Sistem Purchasing</span>
+            </a>
+
+            <!-- User Profile -->
+            <div style="font-size: 0.9rem; font-weight: 500;">
+                <span id="userName">Loading...</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="page-title">
+                <a href="daftar_tagihan.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                <h1>Buat Tagihan Baru</h1>
+            </div>
+        </div>
+
+        <form id="createInvoiceForm">
+
+            <!-- Vendor Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Informasi Vendor & Pembayaran</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Pilih Vendor</label>
+                        <select id="vendorSelect" required>
+                            <option value="">-- Pilih Vendor --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Periode Tagihan</label>
+                        <input type="text" name="periode" placeholder="Contoh: Januari 2026" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tanggal Invoice</label>
+                        <input type="date" name="tanggal" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jatuh Tempo</label>
+                        <input type="date" name="jatuh_tempo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nama Bank</label>
+                        <input type="text" name="nama_bank" placeholder="Bank BCA / Mandiri..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>No. Rekening</label>
+                        <input type="text" name="no_rekening" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Nama Pemilik Rekening</label>
+                        <input type="text" name="nama_rekening" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Keterangan Pembayaran</label>
+                        <textarea name="keterangan_pembayaran" rows="2" placeholder="Catatan tambahan..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linked PO Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Pilih Purchase Order (PO)</h3>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllPO">
+                                </th>
+                                <th>No PO</th>
+                                <th>Vendor</th>
+                                <th>Total PO</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="poListTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center" style="padding: 24px; color: var(--muted-color);">
+                                    Silakan pilih vendor terlebih dahulu.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="card">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; width: 300px;">
+                        <span style="color: var(--muted-color);">Subtotal:</span>
+                        <input type="text" id="subtotalDisplay"
+                            style="text-align: right; border: none; font-weight: 500; background: transparent;"
+                            value="Rp 0" readonly>
+                        <input type="hidden" name="subtotal" id="subtotalInput" value="0">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 300px; align-items: center;">
+                        <span style="color: var(--muted-color);">PPN (11%):</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" id="ppnCheckbox" style="width: auto;">
+                            <label for="ppnCheckbox" style="font-size: 12px;">Enable</label>
+                        </div>
+                        <input type="text" id="ppnDisplay"
+                            style="text-align: right; border: none; font-weight: 500; background: transparent;"
+                            value="Rp 0" readonly>
+                        <input type="hidden" name="ppn" id="ppnInput" value="0">
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; width: 300px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                        <span class="font-bold text-lg">Total Tagihan:</span>
+                        <span class="font-bold text-lg text-blue" id="totalDisplay">Rp 0</span>
+                        <input type="hidden" name="total" id="totalInput" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 24px;">
+                <a href="daftar_tagihan.html" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-primary">
+                    Simpan & Ajukan
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/assets/js/tagihan.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#vendorSelect').select2();
+
+            // Check Auth
+            axios.get('/api/auth/me').then(res => {
+                $('#userName').text(res.data.name);
+            }).catch(() => window.location.href = 'login.html');
+        });
+    </script>
+</body>
+
+</html>

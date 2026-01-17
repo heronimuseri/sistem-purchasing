@@ -13,18 +13,18 @@ const STATIC_ASSETS = [
   "/pr.html",
   "/laporanpr.html",
   "/manifest.json",
-  "/images/logo-icon-192.png",
-  "/images/logo-icon-512.png",
-  "/css/daftarpr.css",
-  "/css/dashboard.css",
-  "/css/all.min.css",
-  "/js/daftarpr_main.js",
-  "/js/dashboard.js",
-  "/js/login.js",
-  "/js/print_pr.js",
-  "/js/pwa.js",
-  "/js/laporanpr.js",
-  "/js/xlsx.full.min.js",
+  "/assets/img/logo-icon-192.png",
+  "/assets/img/logo-icon-512.png",
+  "/assets/css/daftarpr.css",
+  "/assets/css/dashboard.css",
+  "/assets/css/all.min.css",
+  "/assets/js/daftarpr_main.js",
+  "/assets/js/dashboard.js",
+  "/assets/js/login.js",
+  "/assets/js/print_pr.js",
+  "/assets/js/pwa.js",
+  "/assets/js/laporanpr.js",
+  "/assets/js/xlsx.full.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
 ];
 
@@ -129,8 +129,8 @@ self.addEventListener("fetch", (event) => {
               return caches.match("/daftarpr.html");
             }
             // Fallback untuk gambar
-            if (event.request.url.includes("/images/")) {
-              return caches.match("/images/logo-icon-192.png");
+            if (event.request.url.includes("/assets/img/")) {
+              return caches.match("/assets/img/logo-icon-192.png");
             }
           });
       })
@@ -159,9 +159,9 @@ self.addEventListener("push", function (event) {
   const title = data.title || "Sinar Permata Agro - Notifikasi";
   const options = {
     body: data.body || "Ada update baru terkait Purchase Request.",
-    icon: data.icon || "/images/logo-icon-192.png",
-    badge: "/images/logo-icon-192.png", // Badge untuk mobile
-    image: data.image || "/images/logo-icon-512.png",
+    icon: data.icon || "/assets/img/logo-icon-192.png",
+    badge: "/assets/img/logo-icon-192.png", // Badge untuk mobile
+    image: data.image || "/assets/img/logo-icon-512.png",
     vibrate: [200, 100, 200],
     data: {
       // URL yang akan dibuka saat notifikasi diklik

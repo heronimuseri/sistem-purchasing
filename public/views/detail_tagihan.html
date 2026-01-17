@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Tagihan - Sistem Purchasing</title>
+    <!-- Removed Tailwind CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/tagihan.css" rel="stylesheet">
+    <style>
+        @media (max-width: 768px) {
+            .detail-grid-responsive {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-container">
+            <a href="dashboard.html" class="nav-brand">
+                <i class="fas fa-file-invoice"></i>
+                <span>Sistem Purchasing</span>
+            </a>
+
+            <!-- User Profile -->
+            <div style="font-size: 0.9rem; font-weight: 500;">
+                Detail Tagihan
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Header Actions -->
+        <div class="page-header">
+            <div class="page-title">
+                <a href="daftar_tagihan.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                <h1>Detail Tagihan</h1>
+            </div>
+
+            <div id="actionButtons" style="display: flex; gap: 12px;">
+                <!-- Buttons injected by JS based on role/status -->
+            </div>
+        </div>
+
+        <!-- Invoice Content -->
+        <div class="card" id="invoiceCard" style="padding: 0;">
+            <!-- Status Ribbon -->
+            <div
+                style="background-color: #f9fafb; padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="padding: 10px; background-color: #dbeafe; border-radius: 8px; color: #2563eb;">
+                        <i class="fas fa-file-invoice-dollar" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--text-color);"
+                            id="invNo">Loading...</h2>
+                        <span style="font-size: 0.85rem; color: var(--muted-color);" id="invDate">-</span>
+                    </div>
+                </div>
+                <div id="statusBadges">
+                    <!-- Status badge injected here -->
+                </div>
+            </div>
+
+            <div style="padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px;"
+                class="detail-grid-responsive">
+                <!-- Left Column: Vendor & Bank Info -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div>
+                        <h3
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--muted-color); text-transform: uppercase; margin-bottom: 12px;">
+                            Informasi Vendor</h3>
+                        <div
+                            style="background-color: #f9fafb; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p style="font-weight: 700; font-size: 1.1rem; margin: 0 0 4px 0;" id="vendorName">-</p>
+                            <p style="color: var(--text-color); margin: 0;" id="vendorPhone">-</p>
+                            <p style="color: var(--muted-color); font-size: 0.9rem; margin-top: 4px;"
+                                id="vendorAddress">-</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--muted-color); text-transform: uppercase; margin-bottom: 12px;">
+                            Informasi Pembayaran</h3>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div
+                                style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
+                                <span style="color: var(--muted-color);">Periode</span>
+                                <span style="font-weight: 500;" id="invPeriode">-</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
+                                <span style="color: var(--muted-color);">Jatuh Tempo</span>
+                                <span style="font-weight: 500; color: var(--danger-color);" id="invDueDate">-</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
+                                <span style="color: var(--muted-color);">Bank</span>
+                                <span style="font-weight: 500;" id="invBank">-</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
+                                <span style="color: var(--muted-color);">No. Rekening</span>
+                                <span style="font-weight: 500;" id="invRek">-</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">
+                                <span style="color: var(--muted-color);">Atas Nama</span>
+                                <span style="font-weight: 500;" id="invRekName">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Approval & Linked PO -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div>
+                        <h3
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--muted-color); text-transform: uppercase; margin-bottom: 12px;">
+                            Status Approval</h3>
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <!-- Manager HO -->
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 32px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;"
+                                        id="step1Icon">
+                                        <!-- Icon -->
+                                    </div>
+                                    <div style="width: 2px; height: 40px; background-color: #e5e7eb; margin-top: 4px;">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p style="font-weight: 700; font-size: 0.9rem; margin: 0;">Manager HO</p>
+                                    <p style="font-size: 0.8rem; color: var(--muted-color); margin: 0;" id="step1Name">
+                                        Menunggu persetujuan...</p>
+                                    <p style="font-size: 0.75rem; color: #9ca3af; margin: 0;" id="step1Date"></p>
+                                </div>
+                            </div>
+
+                            <!-- Direktur -->
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 32px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;"
+                                        id="step2Icon">
+                                        <!-- Icon -->
+                                    </div>
+                                </div>
+                                <div>
+                                    <p style="font-weight: 700; font-size: 0.9rem; margin: 0;">Direktur</p>
+                                    <p style="font-size: 0.8rem; color: var(--muted-color); margin: 0;" id="step2Name">
+                                        Menunggu persetujuan...</p>
+                                    <p style="font-size: 0.75rem; color: #9ca3af; margin: 0;" id="step2Date"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rejection Note -->
+                        <div id="rejectNote"
+                            style="margin-top: 16px; padding: 12px; background-color: #fee2e2; color: #dc2626; border-radius: 8px; font-size: 0.9rem; display: none;">
+                            <span style="font-weight: 700;">Alasan Penolakan:</span> <span id="rejectReasonText"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--muted-color); text-transform: uppercase; margin-bottom: 12px;">
+                            Linked Purchase Orders</h3>
+                        <div
+                            style="background-color: #f9fafb; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden;">
+                            <ul id="poList" style="list-style: none; margin: 0; padding: 0;">
+                                <li
+                                    style="padding: 12px; text-align: center; color: var(--muted-color); font-size: 0.9rem;">
+                                    Memuat PO...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Totals -->
+            <div style="background-color: #f9fafb; padding: 16px 24px; border-top: 1px solid var(--border-color);">
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; width: 300px; font-size: 0.9rem;">
+                        <span style="color: var(--muted-color);">Subtotal</span>
+                        <span style="font-weight: 500;" id="valSubtotal">Rp 0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 300px; font-size: 0.9rem;">
+                        <span style="color: var(--muted-color);">PPN (11%)</span>
+                        <span style="font-weight: 500;" id="valPpn">Rp 0</span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; width: 300px; font-size: 1.1rem; border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 4px;">
+                        <span style="font-weight: 700;">Total Pembayaran</span>
+                        <span style="font-weight: 700; color: var(--primary-color);" id="valTotal">Rp 0</span>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: #9ca3af; display: flex; justify-content: space-between;">
+                    <span>Created by: <span id="creatorName">-</span></span>
+                    <span>Note: <span id="noteText">-</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/assets/js/tagihan.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            if (id) {
+                loadDetailTagihan(id);
+            } else {
+                Swal.fire('Error', 'ID Tagihan tidak ditemukan.', 'error').then(() => window.location = 'daftar_tagihan.html');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,236 @@
+/* public/login.css - FINAL VERSION */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg-color: #f9f9f7;
+  --panel-color: #ffffff;
+  --text-color: #333333;
+  --muted-color: #6c757d;
+  --primary-color: #6a7b31; /* Warna hijau zaitun yang sama dengan pr.css */
+  --primary-dark: #4e5c25;
+  --accent-color: #f2bf4e;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --border-radius: 12px;
+  --border-color: #e9ecef;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  line-height: 1.6;
+}
+
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(106, 123, 49, 0.05) 0%, rgba(249, 249, 247, 1) 100%);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  padding: 28px 24px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  text-align: center;
+}
+
+.card-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.card-header p {
+  font-size: 14px;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+.card-content {
+  padding: 32px 24px;
+}
+
+.field {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  outline: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  font-family: "Poppins", sans-serif;
+  background-color: white;
+}
+
+input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(106, 123, 49, 0.2);
+}
+
+.actions {
+  margin-top: 28px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+  padding: 14px 16px;
+  font-weight: 600;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 10px rgba(106, 123, 49, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(106, 123, 49, 0.3);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--muted-color);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.brand-logo i {
+  font-size: 28px;
+  color: #f2bf4e;
+}
+
+/* Animasi tambahan untuk meningkatkan UX */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.field {
+  animation: fadeIn 0.5s ease-out 0.1s both;
+}
+
+.actions {
+  animation: fadeIn 0.5s ease-out 0.2s both;
+}
+
+.login-footer {
+  animation: fadeIn 0.5s ease-out 0.3s both;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .wrap {
+    padding: 16px;
+  }
+  
+  .card {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+  }
+  
+  .card:hover {
+    box-shadow: none;
+    transform: none;
+  }
+  
+  .card-header {
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+  }
+  
+  .card-content {
+    padding: 24px 20px;
+  }
+}
+
+/* Dark mode support (opsional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1a1a1a;
+    --panel-color: #2d2d2d;
+    --text-color: #e0e0e0;
+    --muted-color: #a0a0a0;
+    --border-color: #404040;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    background-color: #3d3d3d;
+    color: var(--text-color);
+    border-color: #555;
+  }
+}

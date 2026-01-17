@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pembayaran Tagihan Invoice - Sistem Purchasing</title>
+    <!-- Removed Tailwind CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/tagihan.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-container">
+            <a href="dashboard.html" class="nav-brand">
+                <i class="fas fa-file-invoice"></i>
+                <span>Sistem Purchasing</span>
+            </a>
+
+            <div class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+            </div>
+
+            <!-- User Profile -->
+            <div style="font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 12px;">
+                <span id="userName">Loading...</span>
+                <button onclick="logout()"
+                    style="background: none; border: none; cursor: pointer; color: var(--danger-color);">
+                    <i class="fas fa-power-off"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Daftar Tagihan (Invoice)</h1>
+                <p style="color: var(--muted-color); margin-top: 4px;">Kelola permohonan pembayaran supplier</p>
+            </div>
+            <a href="buat_tagihan.html" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Buat Tagihan
+            </a>
+        </div>
+
+        <!-- Filter Tools (Optional for future) -->
+        <div class="card" style="padding: 16px;">
+            <div style="position: relative; max-width: 400px;">
+                <div
+                    style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted-color);">
+                    <i class="fas fa-search"></i>
+                </div>
+                <input type="text" id="searchInput" style="padding-left: 36px;"
+                    placeholder="Cari No Invoice, Vendor...">
+            </div>
+        </div>
+
+        <!-- Tagihan List -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice Info</th>
+                            <th>Vendor</th>
+                            <th>Total</th>
+                            <th>Jatuh Tempo</th>
+                            <th>Status</th>
+                            <th class="text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tagihanTableBody">
+                        <!-- Rows rendered by JS -->
+                        <tr>
+                            <td colspan="6" class="text-center" style="padding: 40px;">
+                                <i class="fas fa-spinner fa-spin fa-2x"
+                                    style="color: var(--primary-color); margin-bottom: 12px;"></i>
+                                <p>Memuat data tagihan...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/assets/js/tagihan.js"></script>
+    <script>
+        // Check Auth
+        async function checkAuth() {
+            try {
+                const response = await axios.get('/api/auth/me');
+                const user = response.data;
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userInitials').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+                if (user.role !== 'admin') {
+                    document.getElementById('adminLink').classList.add('hidden');
+                }
+            } catch (error) {
+                window.location.href = 'login.html';
+            }
+        }
+        checkAuth();
+
+        function logout() {
+            axios.post('/api/auth/logout').then(() => window.location.href = 'login.html');
+        }
+    </script>
+</body>
+
+</html>
