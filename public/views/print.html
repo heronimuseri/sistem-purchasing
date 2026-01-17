@@ -1,93 +1,95 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Print PR</title>
-    <link rel="stylesheet" href="base.css" />
-    <style>
-      @media print {
-        .no-print {
-          display: none;
-        }
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Print PR</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    @media print {
+      .no-print {
+        display: none;
       }
-    </style>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0ea5e9" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="SPA PR" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="card">
-        <div class="no-print">
-          <a class="btn" href="daftarpr.html">← Kembali</a>
-          <button class="btn" onclick="print()">Cetak</button>
-        </div>
-        <h2>Purchase Request <span id="prNo"></span></h2>
-        <div class="small">
-          Tanggal: <span id="tgl"></span> • Requester: <span id="req"></span> •
-          Keperluan: <span id="kep"></span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Barang</th>
-              <th>Qty</th>
-              <th>Unit</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-          <tbody id="items"></tbody>
-        </table>
-        <div class="hr"></div>
-        <div class="small">Status: <span id="status"></span></div>
+    }
+  </style>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SPA PR" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="no-print">
+        <a class="btn" href="daftarpr.html">← Kembali</a>
+        <button class="btn" onclick="print()">Cetak</button>
       </div>
+      <h2>Purchase Request <span id="prNo"></span></h2>
+      <div class="small">
+        Tanggal: <span id="tgl"></span> • Requester: <span id="req"></span> •
+        Keperluan: <span id="kep"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Barang</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+      </table>
+      <div class="hr"></div>
+      <div class="small">Status: <span id="status"></span></div>
     </div>
-    <script src="/assets/js/pwa.js"></script>
-    <script>
-      async function load() {
-        const url = new URL(location.href);
-        const prNo = url.searchParams.get("pr");
-        if (!prNo) {
-          document.body.innerHTML = "PR tidak ditemukan";
-          return;
-        }
-        const res = await fetch("/api/requests/" + encodeURIComponent(prNo));
-        if (!res.ok) {
-          document.body.innerHTML = "PR tidak ditemukan";
-          return;
-        }
-        const pr = (await res.json()).data;
-        document.getElementById("prNo").textContent = pr.prNo;
-        document.getElementById("tgl").textContent = pr.tanggal;
-        document.getElementById("req").textContent = pr.requester;
-        document.getElementById("kep").textContent = pr.keperluan;
-        document.getElementById("status").textContent = pr.status;
-        const tbody = document.getElementById("items");
-        for (const it of pr.items) {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${it.no}</td><td>${it.nama}</td><td>${
-            it.qty
+  </div>
+  <script src="/assets/js/pwa.js"></script>
+  <script>
+    async function load() {
+      const url = new URL(location.href);
+      const prNo = url.searchParams.get("pr");
+      if (!prNo) {
+        document.body.innerHTML = "PR tidak ditemukan";
+        return;
+      }
+      const res = await fetch("/api/requests/" + encodeURIComponent(prNo));
+      if (!res.ok) {
+        document.body.innerHTML = "PR tidak ditemukan";
+        return;
+      }
+      const pr = (await res.json()).data;
+      document.getElementById("prNo").textContent = pr.prNo;
+      document.getElementById("tgl").textContent = pr.tanggal;
+      document.getElementById("req").textContent = pr.requester;
+      document.getElementById("kep").textContent = pr.keperluan;
+      document.getElementById("status").textContent = pr.status;
+      const tbody = document.getElementById("items");
+      for (const it of pr.items) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${it.no}</td><td>${it.nama}</td><td>${it.qty
           }</td><td>${it.unit}</td><td>${it.keterangan || ""}</td>`;
-          tbody.appendChild(tr);
-        }
+        tbody.appendChild(tr);
       }
-      load();
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js")
-            .then((registration) => {
-              console.log("Service Worker registered:", registration);
-            })
-            .catch((error) => {
-              console.log("Service Worker registration failed:", error);
-            });
-        });
-      }
-    </script>
-  </body>
+    }
+    load();
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log("Service Worker registered:", registration);
+          })
+          .catch((error) => {
+            console.log("Service Worker registration failed:", error);
+          });
+      });
+    }
+  </script>
+</body>
+
 </html>

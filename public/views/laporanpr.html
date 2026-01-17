@@ -2,109 +2,180 @@
 <html lang="id">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laporan Purchase Request - Sinar Permata Agro</title>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="/assets/css/daftarpr.css" />
-  <link rel="stylesheet" href="/assets/css/laporanpr.css" />
-
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="SPA PR" />
-
-  <!-- XLSX Library - Local Version (untuk offline support) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan PR - Sistem Purchasing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/laporanpr.css">
+  <link rel="manifest" href="/manifest.json">
+  <!-- Use XLSX for local export if needed -->
   <script src="/assets/js/xlsx.full.min.js"></script>
 </head>
 
 <body>
-  <div class="container screen-only">
-    <!-- Header Laporan yang Lebih Menarik -->
-    <div class="laporan-header">
-      <h1>
-        <i class="fa-solid fa-file-invoice-dollar"></i> Laporan Purchase
-        Request
-      </h1>
-      <p>Lihat dan kelola semua data Purchase Request perusahaan Anda</p>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-cubes" style="margin-right: 0.5rem;"></i> Purchasing
+      </div>
 
-      <div class="laporan-actions">
-        <a href="/dashboard.html" class="dashboard-btn">
-          <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-gauge-high"></i></div>
+          <span>Dashboard</span>
         </a>
-        <button id="export-excel-btn" class="export-btn">
-          <i class="fa-solid fa-file-excel"></i> Export ke Excel
+
+        <div class="nav-section">Purchasing</div>
+
+        <a href="/pr.html" class="nav-item" id="create-pr-link">
+          <div class="nav-icon"><i class="fa-solid fa-file-pen"></i></div>
+          <span>Buat PR Baru</span>
+        </a>
+
+        <a href="/daftarpr.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-list-check"></i></div>
+          <span>Daftar PR</span>
+          <span id="dashboard-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+        </a>
+
+        <a href="/po.html" class="nav-item" id="create-po-link-sidebar">
+          <div class="nav-icon"><i class="fa-solid fa-file-invoice"></i></div>
+          <span>Buat PO Baru</span>
+        </a>
+
+        <a href="/daftarpo.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <span>Daftar PO</span>
+          <span id="po-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+        </a>
+
+        <div class="nav-section">Finance</div>
+
+        <a href="/buat_tagihan.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <span>Buat Payment</span>
+        </a>
+
+        <a href="/daftar_tagihan.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-money-check-dollar"></i></div>
+          <span>Daftar Payment</span>
+          <span id="invoice-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+        </a>
+
+        <!-- Admin Section -->
+        <div id="admin-menu-section" class="hidden">
+          <div class="nav-section">Administrasi</div>
+          <a href="/laporanpr.html" class="nav-item active">
+            <div class="nav-icon"><i class="fa-solid fa-file-excel"></i></div>
+            <span>Laporan PR</span>
+          </a>
+          <a href="/admin.html" class="nav-item">
+            <div class="nav-icon"><i class="fa-solid fa-users-gear"></i></div>
+            <span>Manajemen User</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="btn btn-secondary btn-sm" style="border: none; background: transparent;">
+          <i class="fa-solid fa-bars fa-lg"></i>
         </button>
-      </div>
-    </div>
 
-    <!-- Statistik Ringkas -->
-    <div class="laporan-stats">
-      <div class="stat-card">
-        <div class="number" id="total-pr">0</div>
-        <div class="label">Total PR</div>
-      </div>
-      <div class="stat-card">
-        <div class="number" id="pending-count">0</div>
-        <div class="label">Menunggu Persetujuan</div>
-      </div>
-      <div class="stat-card">
-        <div class="number" id="approved-count">0</div>
-        <div class="label">Disetujui</div>
-      </div>
-      <div class="stat-card">
-        <div class="number" id="rejected-count">0</div>
-        <div class="label">Ditolak</div>
-      </div>
-    </div>
+        <div class="flex items-center gap-4">
+          <div id="user-info" class="font-bold text-sm"></div>
+          <button id="logout-btn" class="btn btn-danger btn-sm">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </header>
 
-    <!-- Tabel Laporan -->
-    <div class="table-container">
-      <div class="table-header">
-        <div class="table-title">Data Purchase Request Detail</div>
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass search-icon"></i>
-          <input type="text" id="searchInput" placeholder="Cari data laporan..." />
+      <div class="page-content">
+        <div class="flex justify-between items-center mb-6" style="margin-bottom: 2rem;">
+          <div>
+            <h2 style="font-weight: 600; color: var(--text-primary); margin: 0;">Laporan Purchase Requset</h2>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">Ringkasan dan data detail
+              PR</p>
+          </div>
+          <button id="export-excel-btn" class="btn btn-success">
+            <i class="fa-solid fa-file-excel"></i> Export ke Excel
+          </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div class="card" style="text-align: center; padding: 1.5rem;">
+            <div id="total-pr" style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">0</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">Total PR</div>
+          </div>
+          <div class="card" style="text-align: center; padding: 1.5rem;">
+            <div id="pending-count" style="font-size: 2rem; font-weight: 700; color: var(--warning-color);">0</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">Menunggu Approval</div>
+          </div>
+          <div class="card" style="text-align: center; padding: 1.5rem;">
+            <div id="approved-count" style="font-size: 2rem; font-weight: 700; color: var(--success-color);">0</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">Disetujui</div>
+          </div>
+          <div class="card" style="text-align: center; padding: 1.5rem;">
+            <div id="rejected-count" style="font-size: 2rem; font-weight: 700; color: var(--danger-color);">0</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem;">Ditolak</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flex items-center gap-4 mb-4" style="margin-bottom: 1.5rem;">
+            <div style="flex: 1; min-width: 250px; position: relative;">
+              <i class="fa-solid fa-search"
+                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+              <input type="text" id="searchInput" class="form-input" style="padding-left: 2.5rem; width: 100%;"
+                placeholder="Cari data laporan...">
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table id="reportTable">
+              <thead>
+                <tr>
+                  <th style="width: 5%; text-align: center">No</th>
+                  <th style="width: 15%">PR No.</th>
+                  <th style="width: 10%">Tanggal</th>
+                  <th style="width: 15%">Diminta Oleh</th>
+                  <th style="width: 20%">Untuk kebutuhan / Uraian</th>
+                  <th style="width: 10%">Status</th>
+                  <th style="width: 15%">Nama & Spesifikasi Barang</th>
+                  <th style="width: 5%; text-align: right">Qty</th>
+                  <th style="width: 5%">Satuan</th>
+                </tr>
+              </thead>
+              <tbody id="requests-table-body">
+                <tr>
+                  <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"
+                      style="color: var(--primary-color); display: block; margin: 0 auto 1rem auto;"></i>
+                    Memuat data laporan detail...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-
-      <div class="table-wrapper">
-        <table id="reportTable">
-          <thead>
-            <tr>
-              <th style="width: 5%; text-align: center">No</th>
-              <th style="width: 15%">PR No.</th>
-              <th style="width: 10%">Tanggal</th>
-              <th style="width: 15%">Diminta Oleh</th>
-              <th style="width: 20%">Untuk kebutuhan / Uraian</th>
-              <th style="width: 10%">Status</th>
-              <th style="width: 15%">Nama & Spesifikasi Barang</th>
-              <th style="width: 5%; text-align: right">Qty</th>
-              <th style="width: 5%">Satuan</th>
-            </tr>
-          </thead>
-          <tbody id="requests-table-body">
-            <tr>
-              <td colspan="9">
-                <div class="loading-container">
-                  <div class="loading-spinner"></div>
-                  <p>Memuat data laporan detail...</p>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </main>
   </div>
 
-  <!-- Load daftarpr_main.js hanya untuk fungsi normalizeReportItem -->
-  <script src="/assets/js/daftarpr_main.js"></script>
-  <!-- Load laporanpr.js untuk fungsi khusus laporan -->
-  <script src="/assets/js/laporanpr.js"></script>
   <script src="/assets/js/pwa.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <!-- Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Keep script dependencies for report logic -->
+  <script src="/assets/js/daftarpr_main.js"></script>
+  <script src="/assets/js/laporanpr.js"></script>
 </body>
 
 </html>

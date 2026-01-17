@@ -5,158 +5,234 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buat Tagihan Baru - Sistem Purchasing</title>
-    <!-- Removed Tailwind CDN -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="/assets/css/tagihan.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/tagihan.css">
+    <link rel="manifest" href="/manifest.json">
 </head>
 
 <body>
-
-    <!-- Navbar -->
-    <!-- Navbar -->
-    <nav>
-        <div class="nav-container">
-            <a href="dashboard.html" class="nav-brand">
-                <i class="fas fa-file-invoice"></i>
-                <span>Sistem Purchasing</span>
-            </a>
-
-            <!-- User Profile -->
-            <div style="font-size: 0.9rem; font-weight: 500;">
-                <span id="userName">Loading...</span>
+    <div class="app-shell">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-cubes" style="margin-right: 0.5rem;"></i> Purchasing
             </div>
-        </div>
-    </nav>
 
-    <div class="container">
-        <div class="page-header">
-            <div class="page-title">
-                <a href="daftar_tagihan.html" class="back-link">
-                    <i class="fas fa-arrow-left"></i> Kembali
+            <nav class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item">
+                    <div class="nav-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                    <span>Dashboard</span>
                 </a>
-                <h1>Buat Tagihan Baru</h1>
-            </div>
-        </div>
 
-        <form id="createInvoiceForm">
+                <div class="nav-section">Purchasing</div>
 
-            <!-- Vendor Selection -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Informasi Vendor & Pembayaran</h3>
+                <a href="/pr.html" class="nav-item" id="create-pr-link">
+                    <div class="nav-icon"><i class="fa-solid fa-file-pen"></i></div>
+                    <span>Buat PR Baru</span>
+                </a>
+
+                <a href="/daftarpr.html" class="nav-item">
+                    <div class="nav-icon"><i class="fa-solid fa-list-check"></i></div>
+                    <span>Daftar PR</span>
+                    <span id="dashboard-badge" class="badge badge-warning"
+                        style="margin-left: auto; display: none;">0</span>
+                </a>
+
+                <a href="/po.html" class="nav-item" id="create-po-link-sidebar">
+                    <div class="nav-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                    <span>Buat PO Baru</span>
+                </a>
+
+                <a href="/daftarpo.html" class="nav-item">
+                    <div class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <span>Daftar PO</span>
+                    <span id="po-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+                </a>
+
+                <div class="nav-section">Finance</div>
+
+                <a href="/buat_tagihan.html" class="nav-item active" id="create-payment-link">
+                    <div class="nav-icon"><i class="fa-solid fa-credit-card"></i></div>
+                    <span>Buat Payment</span>
+                </a>
+
+                <a href="/daftar_tagihan.html" class="nav-item" id="view-payment-link">
+                    <div class="nav-icon"><i class="fa-solid fa-money-check-dollar"></i></div>
+                    <span>Daftar Payment</span>
+                    <span id="invoice-badge" class="badge badge-warning"
+                        style="margin-left: auto; display: none;">0</span>
+                </a>
+
+                <!-- Admin Section -->
+                <div id="admin-menu-section" class="hidden">
+                    <div class="nav-section">Administrasi</div>
+                    <a href="/laporanpr.html" class="nav-item">
+                        <div class="nav-icon"><i class="fa-solid fa-file-excel"></i></div>
+                        <span>Laporan PR</span>
+                    </a>
+                    <a href="/admin.html" class="nav-item">
+                        <div class="nav-icon"><i class="fa-solid fa-users-gear"></i></div>
+                        <span>Manajemen User</span>
+                    </a>
                 </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Pilih Vendor</label>
-                        <select id="vendorSelect" required>
-                            <option value="">-- Pilih Vendor --</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Periode Tagihan</label>
-                        <input type="text" name="periode" placeholder="Contoh: Januari 2026" required>
-                    </div>
+            </nav>
+        </aside>
 
-                    <div class="form-group">
-                        <label>Tanggal Invoice</label>
-                        <input type="date" name="tanggal" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Jatuh Tempo</label>
-                        <input type="date" name="jatuh_tempo" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Nama Bank</label>
-                        <input type="text" name="nama_bank" placeholder="Bank BCA / Mandiri..." required>
-                    </div>
-                    <div class="form-group">
-                        <label>No. Rekening</label>
-                        <input type="text" name="no_rekening" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Nama Pemilik Rekening</label>
-                        <input type="text" name="nama_rekening" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Keterangan Pembayaran</label>
-                        <textarea name="keterangan_pembayaran" rows="2" placeholder="Catatan tambahan..."></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Linked PO Selection -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Pilih Purchase Order (PO)</h3>
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="selectAllPO">
-                                </th>
-                                <th>No PO</th>
-                                <th>Vendor</th>
-                                <th>Total PO</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="poListTableBody">
-                            <tr>
-                                <td colspan="5" class="text-center" style="padding: 24px; color: var(--muted-color);">
-                                    Silakan pilih vendor terlebih dahulu.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Totals -->
-            <div class="card">
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
-                    <div style="display: flex; justify-content: space-between; width: 300px;">
-                        <span style="color: var(--muted-color);">Subtotal:</span>
-                        <input type="text" id="subtotalDisplay"
-                            style="text-align: right; border: none; font-weight: 500; background: transparent;"
-                            value="Rp 0" readonly>
-                        <input type="hidden" name="subtotal" id="subtotalInput" value="0">
-                    </div>
-                    <div style="display: flex; justify-content: space-between; width: 300px; align-items: center;">
-                        <span style="color: var(--muted-color);">PPN (11%):</span>
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <input type="checkbox" id="ppnCheckbox" style="width: auto;">
-                            <label for="ppnCheckbox" style="font-size: 12px;">Enable</label>
-                        </div>
-                        <input type="text" id="ppnDisplay"
-                            style="text-align: right; border: none; font-weight: 500; background: transparent;"
-                            value="Rp 0" readonly>
-                        <input type="hidden" name="ppn" id="ppnInput" value="0">
-                    </div>
-                    <div
-                        style="display: flex; justify-content: space-between; width: 300px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-                        <span class="font-bold text-lg">Total Tagihan:</span>
-                        <span class="font-bold text-lg text-blue" id="totalDisplay">Rp 0</span>
-                        <input type="hidden" name="total" id="totalInput" value="0">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 24px;">
-                <a href="daftar_tagihan.html" class="btn btn-secondary">Batal</a>
-                <button type="submit" class="btn btn-primary">
-                    Simpan & Ajukan
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <button id="sidebar-toggle" class="btn btn-secondary btn-sm"
+                    style="border: none; background: transparent;">
+                    <i class="fa-solid fa-bars fa-lg"></i>
                 </button>
-            </div>
 
-        </form>
+                <div class="flex items-center gap-4">
+                    <div id="user-info" class="font-bold text-sm"></div>
+                    <button id="logout-btn" class="btn btn-danger btn-sm">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <h2 style="margin-bottom: 2rem; font-weight: 600; color: var(--text-primary);">Buat Tagihan Baru</h2>
+
+                <form id="createInvoiceForm">
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <h3
+                            style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                            Informasi Vendor & Pembayaran
+                        </h3>
+
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="vendorSelect">Pilih Vendor</label>
+                                <select id="vendorSelect" class="form-input" style="width: 100%;" required>
+                                    <option value="">-- Pilih Vendor --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Periode Tagihan</label>
+                                <input type="text" name="periode" class="form-input" placeholder="Contoh: Januari 2026"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Tanggal Invoice</label>
+                                <input type="date" name="tanggal" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Jatuh Tempo</label>
+                                <input type="date" name="jatuh_tempo" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Nama Bank</label>
+                                <input type="text" name="nama_bank" class="form-input"
+                                    placeholder="Bank BCA / Mandiri..." required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">No. Rekening</label>
+                                <input type="text" name="no_rekening" class="form-input" required>
+                            </div>
+
+                            <div class="form-group full-width" style="grid-column: 1 / -1;">
+                                <label class="form-label">Nama Pemilik Rekening</label>
+                                <input type="text" name="nama_rekening" class="form-input" required>
+                            </div>
+
+                            <div class="form-group full-width" style="grid-column: 1 / -1;">
+                                <label class="form-label">Keterangan Pembayaran</label>
+                                <textarea name="keterangan_pembayaran" class="form-input" rows="2"
+                                    placeholder="Catatan tambahan..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <h3
+                            style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                            Pilih Purchase Order (PO)
+                        </h3>
+                        <div class="table-container">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px; text-align: center;"><input type="checkbox"
+                                                id="selectAllPO"></th>
+                                        <th>No PO</th>
+                                        <th>Vendor</th>
+                                        <th>Total PO</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="poListTableBody">
+                                    <tr>
+                                        <td colspan="5"
+                                            style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                                            Silakan pilih vendor terlebih dahulu.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 1rem;">
+
+                            <div style="display: flex; justify-content: space-between; width: 100%; max-width: 400px;">
+                                <span style="color: var(--text-secondary);">Subtotal:</span>
+                                <input type="text" id="subtotalDisplay"
+                                    style="text-align: right; border: none; font-weight: 500; background: transparent;"
+                                    value="Rp 0" readonly>
+                                <input type="hidden" name="subtotal" id="subtotalInput" value="0">
+                            </div>
+
+                            <div
+                                style="display: flex; justify-content: space-between; width: 100%; max-width: 400px; align-items: center;">
+                                <span style="color: var(--text-secondary);">PPN (11%):</span>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="ppnCheckbox" style="width: auto;">
+                                    <label for="ppnCheckbox" style="font-size: 0.875rem;">Enable</label>
+                                </div>
+                                <input type="text" id="ppnDisplay"
+                                    style="text-align: right; border: none; font-weight: 500; background: transparent;"
+                                    value="Rp 0" readonly>
+                                <input type="hidden" name="ppn" id="ppnInput" value="0">
+                            </div>
+
+                            <div
+                                style="display: flex; justify-content: space-between; width: 100%; max-width: 400px; border-top: 2px solid var(--border-color); padding-top: 1rem;">
+                                <span style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Total
+                                    Tagihan:</span>
+                                <span style="font-size: 1.25rem; font-weight: 700; color: var(--primary-color);"
+                                    id="totalDisplay">Rp 0</span>
+                                <input type="hidden" name="total" id="totalInput" value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                        <a href="/daftar_tagihan.html" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary" style="background-color: var(--success-color);">
+                            <i class="fa-solid fa-save"></i> Simpan & Ajukan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
     </div>
 
-    <!-- Scripts -->
+    <script src="/assets/js/pwa.js"></script>
+    <script src="/assets/js/app.js"></script>
+    <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -165,12 +241,7 @@
     <script src="/assets/js/tagihan.js"></script>
     <script>
         $(document).ready(function () {
-            $('#vendorSelect').select2();
-
-            // Check Auth
-            axios.get('/api/auth/me').then(res => {
-                $('#userName').text(res.data.name);
-            }).catch(() => window.location.href = 'login.html');
+            // Additional initialization if needed, but tagihan.js handles most
         });
     </script>
 </body>

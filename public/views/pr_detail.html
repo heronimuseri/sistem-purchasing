@@ -2,70 +2,189 @@
 <html lang="id">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detail Purchase Request - Purchasing System</title>
-  <link rel="stylesheet" href="/assets/css/all.min.css" type="text/css" />
-  <link rel="stylesheet" href="/assets/css/pr_detail.css?v=1.0.3" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="SPA PR" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail PR - Sistem Purchasing</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/pr_detail.css">
+  <link rel="manifest" href="/manifest.json">
 </head>
 
 <body>
-  <div class="container">
-    <div id="loading-state">
-      <p class="loading-text">Memuat data detail PR...</p>
-    </div>
-
-    <div id="main-content" class="hidden">
-      <div class="header">
-        <h1>
-          <i class="fa-solid fa-file-invoice"></i> Detail Purchase Request
-        </h1>
-        <div class="header-actions">
-          <a href="daftarpr.html" class="btn btn-secondary">Kembali ke Daftar PR</a>
-        </div>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-cubes" style="margin-right: 0.5rem;"></i> Purchasing
       </div>
 
-      <div class="card info-grid">
-        <div><label>PR No.</label><span id="detail-pr-no"></span></div>
-        <div><label>Tanggal</label><span id="detail-tanggal"></span></div>
-        <div>
-          <label>Diminta Oleh</label><span id="detail-requester"></span>
-        </div>
-        <div>
-          <label>Status</label><span id="detail-status" class="status"></span>
-        </div>
-        <div class="uraian">
-          <label>Untuk Kebutuhan / Uraian</label><span id="detail-keperluan"></span>
-        </div>
-        <div class="reject-reason hidden" id="detail-reject-reason-container">
-          <label style="color: var(--status-rejected-text)">Alasan Penolakan</label>
-          <span id="detail-reject-reason" style="color: var(--status-rejected-text)"></span>
-        </div>
-      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-gauge-high"></i></div>
+          <span>Dashboard</span>
+        </a>
 
-      <h2>Detail Barang</h2>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 5%">No</th>
-              <th>Nama & Spesifikasi Barang</th>
-              <th style="width: 10%">Qty</th>
-              <th style="width: 15%">Satuan</th>
-            </tr>
-          </thead>
-          <tbody id="detail-items-body"></tbody>
-        </table>
+        <div class="nav-section">Purchasing</div>
+
+        <a href="/pr.html" class="nav-item" id="create-pr-link">
+          <div class="nav-icon"><i class="fa-solid fa-file-pen"></i></div>
+          <span>Buat PR Baru</span>
+        </a>
+
+        <a href="/daftarpr.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-list-check"></i></div>
+          <span>Daftar PR</span>
+          <span id="dashboard-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+        </a>
+
+        <a href="/po.html" class="nav-item" id="create-po-link">
+          <div class="nav-icon"><i class="fa-solid fa-file-invoice"></i></div>
+          <span>Buat PO Baru</span>
+        </a>
+
+        <a href="/daftarpo.html" class="nav-item">
+          <div class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <span>Daftar PO</span>
+          <span id="po-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+        </a>
+
+        <div class="nav-section">Finance</div>
+
+        <a href="/buat_tagihan.html" class="nav-item" id="create-payment-link">
+          <div class="nav-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <span>Buat Payment</span>
+        </a>
+
+        <a href="/daftar_tagihan.html" class="nav-item" id="view-payment-link">
+          <div class="nav-icon"><i class="fa-solid fa-money-check-dollar"></i></div>
+          <span>Daftar Payment</span>
+          <span id="invoice-badge" class="badge badge-warning" style="margin-left: auto; display: none;">0</span>
+        </a>
+
+        <!-- Admin Section -->
+        <div id="admin-menu-section" class="hidden">
+          <div class="nav-section">Administrasi</div>
+          <a href="/laporanpr.html" class="nav-item">
+            <div class="nav-icon"><i class="fa-solid fa-file-excel"></i></div>
+            <span>Laporan PR</span>
+          </a>
+          <a href="/admin.html" class="nav-item">
+            <div class="nav-icon"><i class="fa-solid fa-users-gear"></i></div>
+            <span>Manajemen User</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="btn btn-secondary btn-sm" style="border: none; background: transparent;">
+          <i class="fa-solid fa-bars fa-lg"></i>
+        </button>
+
+        <div class="flex items-center gap-4">
+          <div id="user-info" class="font-bold text-sm"></div>
+          <button id="logout-btn" class="btn btn-danger btn-sm">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <div id="loading-state" style="text-align: center; padding: 3rem;">
+          <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: var(--primary-color);"></i>
+          <p class="loading-text" id="loading-text" style="margin-top: 1rem; color: var(--text-secondary);">Memuat
+            detail PR...</p>
+        </div>
+
+        <div id="main-content" class="hidden">
+          <div class="flex justify-between items-center mb-6" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <a href="/daftarpr.html" class="btn btn-secondary btn-sm"><i class="fa-solid fa-arrow-left"></i></a>
+              <h2 style="font-weight: 600; color: var(--text-primary); margin: 0;">Detail Purchase Request</h2>
+            </div>
+
+            <div id="detail-actions">
+              <!-- Action buttons could go here (e.g. Approve/Reject if role allows) -->
+            </div>
+          </div>
+
+          <div class="card">
+            <!-- Header Info -->
+            <div
+              style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 2rem;">
+              <div>
+                <div
+                  style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                  No PR</div>
+                <div id="detail-pr-no" style="font-size: 1.125rem; font-weight: 600; font-family: monospace;">-</div>
+              </div>
+
+              <div>
+                <div
+                  style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                  Tanggal</div>
+                <div id="detail-tanggal" style="font-size: 1rem; font-weight: 500;">-</div>
+              </div>
+
+              <div>
+                <div
+                  style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                  Diminta Oleh</div>
+                <div id="detail-requester" style="font-size: 1rem; font-weight: 500;">-</div>
+              </div>
+
+              <div>
+                <div
+                  style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                  Status</div>
+                <span id="detail-status" class="badge badge-info"
+                  style="font-size: 0.875rem; padding: 0.35rem 0.75rem;">-</span>
+                <div id="detail-reject-reason-container" class="hidden"
+                  style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--danger-color);">
+                  <i class="fa-solid fa-circle-exclamation"></i> <span id="detail-reject-reason"></span>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+              <div
+                style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+                Keperluan / Uraian</div>
+              <div id="detail-keperluan"
+                style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                -
+              </div>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-secondary);">Detail
+              Barang</h3>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Nama & Spesifikasi Barang</th>
+                    <th style="width: 150px;">Qty</th>
+                    <th style="width: 150px;">Satuan</th>
+                  </tr>
+                </thead>
+                <tbody id="detail-items-body">
+                  <!-- Items inserted by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
-  <script src="/assets/js/pwa.js?v=1.0.3"></script>
-  <script src="/assets/js/pr_detail.js?v=1.0.3"></script>
+
+  <script src="/assets/js/pwa.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/pr_detail.js"></script>
 </body>
 
 </html>
